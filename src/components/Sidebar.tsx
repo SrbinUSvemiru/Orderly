@@ -7,7 +7,9 @@ import {
   UserRoundPen,
   Settings,
   ChevronUp,
+  LogOut,
   User2,
+  ChevronRight,
 } from "lucide-react";
 
 import {
@@ -21,13 +23,14 @@ import {
   SidebarTrigger,
   SidebarFooter,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
 import { toast } from "sonner";
 
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import Avatar from "./Avatar";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import {
@@ -36,6 +39,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@radix-ui/react-dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
 
 // Menu items.
 const items = [
@@ -54,15 +62,18 @@ const items = [
     url: "#",
     icon: Calendar,
   },
-  {
-    title: "Account",
-    url: "/account",
-    icon: UserRoundPen,
-  },
+
   {
     title: "Settings",
-    url: "/settings",
+    url: "",
     icon: Settings,
+    subitems: [
+      {
+        title: "Account",
+        url: "/settings/account",
+        icon: UserRoundPen,
+      },
+    ],
   },
 ];
 
@@ -103,12 +114,44 @@ export default function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
+                  <Collapsible className="group/collapsible data-[open]">
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton
+                        asChild
+                        disabled={!item?.subitems?.length}
+                        className="cursor-pointer"
+                      >
+                        {item.url ? (
+                          <a href={item.url}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </a>
+                        ) : (
+                          <p className="w-full flex">
+                            <item.icon />
+                            <span>{item.title}</span>
+                            <ChevronRight className="h-4 w-4 ml-auto" />
+                          </p>
+                        )}
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      {item.subitems?.length && (
+                        <SidebarMenuSub>
+                          {item.subitems?.map((subitem) => (
+                            <SidebarMenuSubItem key={subitem.title}>
+                              <SidebarMenuButton asChild>
+                                <a href={subitem.url}>
+                                  <subitem.icon />
+                                  <span>{subitem.title}</span>
+                                </a>
+                              </SidebarMenuButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      )}
+                    </CollapsibleContent>
+                  </Collapsible>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -131,15 +174,19 @@ export default function AppSidebar() {
                 className="w-[--radix-popper-anchor-width] bg-popover cursor-pointer"
               >
                 <DropdownMenuItem>
-                  <Button asChild variant="outline" className="cursor-pointer">
+                  <SidebarMenuButton
+                    asChild
+                    variant="outline"
+                    className="cursor-pointer"
+                  >
                     <a href="/account">
                       <UserRoundPen />
                       <span>Account</span>
                     </a>
-                  </Button>
+                  </SidebarMenuButton>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Button
+                  <SidebarMenuButton
                     variant="outline"
                     className="cursor-pointer"
                     onClick={() =>
@@ -149,8 +196,9 @@ export default function AppSidebar() {
                       })
                     }
                   >
-                    Sign out
-                  </Button>
+                    <LogOut />
+                    <span> Sign out</span>
+                  </SidebarMenuButton>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

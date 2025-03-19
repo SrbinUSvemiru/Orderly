@@ -10,7 +10,7 @@ async function Layout({ children }: { children: React.ReactNode }) {
           Orderly
         </header>
         <Separator />
-        <div className="overflow-auto">
+        <div className="overflow-auto h-full">
           <div className="flex-1 container p-4 text-accent-foreground">
             {children}
           </div>

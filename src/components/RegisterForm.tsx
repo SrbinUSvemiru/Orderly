@@ -27,6 +27,8 @@ export const RegisterForm = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      lastName: "",
+      firstName: "",
     },
   });
 
@@ -69,7 +71,7 @@ export const RegisterForm = () => {
               <FormControl>
                 <Input placeholder="John" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-left" />
             </FormItem>
           )}
         />
@@ -82,8 +84,6 @@ export const RegisterForm = () => {
               <FormControl>
                 <Input placeholder="Smith" {...field} />
               </FormControl>
-
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -97,7 +97,7 @@ export const RegisterForm = () => {
                 <Input placeholder="example@mail.com" {...field} />
               </FormControl>
 
-              <FormMessage />
+              <FormMessage className="text-left" />
             </FormItem>
           )}
         />
@@ -111,7 +111,7 @@ export const RegisterForm = () => {
                 <Input placeholder="password" {...field} />
               </FormControl>
 
-              <FormMessage />
+              <FormMessage className="text-left" />
             </FormItem>
           )}
         />
@@ -125,7 +125,7 @@ export const RegisterForm = () => {
                 <Input placeholder="Re-enter password" {...field} />
               </FormControl>
 
-              <FormMessage />
+              <FormMessage className="text-left" />
             </FormItem>
           )}
         />

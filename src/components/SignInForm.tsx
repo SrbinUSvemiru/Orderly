@@ -61,7 +61,7 @@ export const SignInForm = () => {
               <FormControl>
                 <Input placeholder="email@example.com" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-left" />
             </FormItem>
           )}
         />
@@ -75,7 +75,7 @@ export const SignInForm = () => {
                 <Input placeholder="Enter password" {...field} />
               </FormControl>
 
-              <FormMessage />
+              <FormMessage className="text-left" />
             </FormItem>
           )}
         />
