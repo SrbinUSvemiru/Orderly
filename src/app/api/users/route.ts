@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { db } from "../../../db/index";
 import { users } from "../../../db/schema";
 import { eq } from "drizzle-orm";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 import { RegisterSchema } from "@/types/register-schema";
 
 export async function POST(req: NextRequest) {
