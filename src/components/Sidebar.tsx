@@ -1,9 +1,7 @@
 "use client";
 
 import {
-  Calendar,
   Workflow,
-  Inbox,
   UserRoundPen,
   Settings,
   ChevronUp,
@@ -27,9 +25,9 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
-import { Button } from "./ui/button";
+// import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
@@ -53,17 +51,6 @@ const items = [
     icon: Workflow,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-
-  {
     title: "Settings",
     url: "",
     icon: Settings,
@@ -80,32 +67,32 @@ const items = [
 export default function AppSidebar() {
   const session = useSession();
 
-  const addOrg = async () => {
-    try {
-      const response = await fetch("/api/organizations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "Home",
-        }),
-      });
+  // const addOrg = async () => {
+  //   try {
+  //     const response = await fetch("/api/organizations", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         name: "Home",
+  //       }),
+  //     });
 
-      if (response.ok) {
-        toast.error("success");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     if (response.ok) {
+  //       toast.success("Organization added");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   return (
     <Sidebar className="position-relative">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
-      <SidebarHeader className="p-4 flex-row items-center justify-start">
-        <Button className="w-full" onClick={addOrg}>
+      <SidebarHeader className="p-4 flex-row items-center justify-start h-16">
+        {/* <Button className="w-full" onClick={addOrg}>
           Add org
-        </Button>
+        </Button> */}
       </SidebarHeader>
       <Separator />
       <SidebarContent>
@@ -173,18 +160,6 @@ export default function AppSidebar() {
                 side="top"
                 className="w-[--radix-popper-anchor-width] bg-popover cursor-pointer"
               >
-                <DropdownMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    variant="outline"
-                    className="cursor-pointer"
-                  >
-                    <a href="/account">
-                      <UserRoundPen />
-                      <span>Account</span>
-                    </a>
-                  </SidebarMenuButton>
-                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <SidebarMenuButton
                     variant="outline"

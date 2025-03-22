@@ -37,16 +37,18 @@ export const organizationRelations = relations(organizations, ({ many }) => ({
 export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
   email: varchar().unique().notNull(),
-  phone: text().unique(),
+  phone: text().unique().default(""),
   firstName: text().default(""),
   lastName: text().default(""),
   name: text().default(""),
   password: varchar().notNull(),
-  organizationId: uuid("organization_id").references(() => organizations.id, {
-    onDelete: "cascade",
-  }),
+  organizationId: uuid("organization_id")
+    .references(() => organizations.id, {
+      onDelete: "cascade",
+    })
+    .default(""),
   type: UserTypeEnum().notNull().default("client"),
-  image: text(),
+  image: text().default(""),
   active: boolean().notNull().default(true),
   ...timestamps,
 });
