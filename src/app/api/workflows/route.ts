@@ -8,7 +8,8 @@ export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     console.log("Decoded token:", token);
-    const name = "home";
+    const body = await req.json();
+    const { organizationId, name } = body;
 
     const workflow = await db
       .select()
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     const newWorkflow = await db.insert(workflows).values({
       name: name,
-      organizationId: "1",
+      organizationId: organizationId,
     });
 
     return NextResponse.json(
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.error("Error creating workflow:", error);
     return NextResponse.json(
       { message: "Internal Server Error", error: String(error) },
       { status: 500 }
@@ -43,24 +44,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const users = await db.query.users.findMany({
-      columns: {
-        id: true,
-        name: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        type: true,
-        image: true,
-        organizationId: true,
-      },
-    });
+    const workflows = await db.query.users.findMany();
 
-    if (users) {
-      return NextResponse.json({ users: users }, { status: 200 });
+    if (workflows) {
+      return NextResponse.json({ workflows: workflows }, { status: 200 });
     }
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.error("Error geting workflows:", error);
     return NextResponse.json(
       { message: "Internal Server Error", error: String(error) },
       { status: 500 }
