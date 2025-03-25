@@ -9,10 +9,11 @@ import {
   User2,
   ChevronRight,
   ChevronDown,
+  CirclePlus,
   LucideIcon,
 } from "lucide-react";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   Sidebar,
@@ -46,6 +47,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
+import { DropdownMenuSeparator } from "./ui/dropdown-menu";
+import { Skeleton } from "./ui/skeleton";
+import useWorkflows from "@/lib/queries/useWorkflows";
+import { Workflow as WorkflowType } from "@/types/workflow";
+import Link from "next/link";
+
+import { triggerModal } from "@/lib/triggerModal";
 
 interface SidebarItem {
   id: string;
@@ -53,6 +61,11 @@ interface SidebarItem {
   title: string;
   icon: LucideIcon;
   type: SidebarItemType;
+  actionButton?: {
+    icon: LucideIcon;
+    label: string;
+    onClick?: () => void;
+  };
   subitems?: SidebarItem[];
 }
 
@@ -109,55 +122,89 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
   );
 };
 
-const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <SidebarMenuButton asChild>
-        {item.url ? (
-          <a href={item.url} className="w-full flex">
-            <item.icon className="h-4 w-4 mr-1" />
-            <span>{item.title}</span>
-          </a>
-        ) : (
-          <p className="w-full flex">
-            <item.icon className="h-4 w-4 mr-1" />
-            <span>{item.title}</span>
-            <ChevronRight className="h-4 w-4 ml-auto" />
-          </p>
+const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <SidebarMenuButton asChild className="cursor-pointer">
+          {item.url ? (
+            <a href={item.url} className="w-full flex">
+              <item.icon className="h-4 w-4 mr-1" />
+              <span>{item.title}</span>
+            </a>
+          ) : (
+            <p className="w-full flex">
+              <item.icon className="h-4 w-4 mr-1" />
+              <span>{item.title}</span>
+              <ChevronRight className="h-4 w-4 ml-auto" />
+            </p>
+          )}
+        </SidebarMenuButton>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        side="right"
+        className="w-full py-2 px-1 bg-popover cursor-pointer rounded-md"
+      >
+        {item?.actionButton && (
+          <>
+            <DropdownMenuItem
+              onClick={() =>
+                item.actionButton?.onClick ? item.actionButton?.onClick() : {}
+              }
+              className="py-2 px-4 flex w-full items-center justify-center"
+            >
+              <span>{item?.actionButton?.label}</span>
+              <item.actionButton.icon className="h-4 w-4 ml-1" />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
         )}
-      </SidebarMenuButton>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent
-      align="end"
-      side="right"
-      className="w-[--radix-popper-anchor-width] bg-popover cursor-pointer rounded-md"
-    >
-      {item.subitems?.map((el) => (
-        <DropdownMenuItem key={el.id} className="py-3 px-6">
-          <span>{el?.title}</span>
-        </DropdownMenuItem>
-      ))}
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
+        {item.subitems?.map((el) =>
+          el?.url ? (
+            <Link href={el?.url} key={el.id}>
+              <DropdownMenuItem key={el.id} className="py-2 px-4">
+                <span>{el?.title}</span>
+              </DropdownMenuItem>
+            </Link>
+          ) : (
+            <DropdownMenuItem key={el.id} className="py-2 px-4">
+              <span>{el?.title}</span>
+            </DropdownMenuItem>
+          )
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 // Menu items.
-const items: SidebarItem[] = [
+const getItems = ({
+  workflows,
+}: {
+  workflows: WorkflowType[];
+}): SidebarItem[] => [
   {
     id: "1",
     title: "Workflow",
     url: "",
     icon: Workflow,
     type: "popover",
-    subitems: [
-      {
-        id: "sub1",
-        title: "Home",
-        url: "/",
-        icon: Workflow,
-        type: "subitem",
-      },
-    ],
+    actionButton: {
+      icon: CirclePlus,
+      label: "Add",
+      onClick: () =>
+        triggerModal({ title: "Create new workflow", modalType: "workflow" }),
+    },
+    subitems: !workflows?.length
+      ? []
+      : workflows?.map((el: WorkflowType) => ({
+          id: el.id,
+          title: el?.name,
+          url: `/workflow/${el.id}`,
+          icon: Workflow,
+          type: "subitem",
+        })),
   },
   {
     id: "2",
@@ -188,7 +235,18 @@ const getItem = (item: SidebarItem) => {
 };
 
 export default function AppSidebar() {
-  const session = useSession();
+  const { data: session, status } = useSession();
+  const { workflows } = useWorkflows();
+
+  const sidebarItems = useMemo(
+    () => (workflows ? getItems({ workflows }) : []),
+    [workflows]
+  );
+
+  // const { data, error, isMutating } = useSWR(
+  //   ["http://localhost:3000/api/workflow", { method: "GET" }],
+  //   fetcher
+  // );
 
   // const addOrg = async () => {
   //   try {
@@ -209,6 +267,7 @@ export default function AppSidebar() {
   //     console.log(error);
   //   }
   // };
+  console.log(workflows);
   return (
     <Sidebar className="position-relative">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
@@ -222,7 +281,7 @@ export default function AppSidebar() {
         <SidebarGroup className="py-4">
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {sidebarItems?.map((item: SidebarItem) => (
                 <SidebarMenuItem key={item.title}>
                   {getItem(item)}
                 </SidebarMenuItem>
@@ -238,13 +297,17 @@ export default function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                   <User2 />
-                  {session?.data?.user?.name || session?.data?.user?.email}
+                  {status === "loading" ? (
+                    <Skeleton className="min-w-[90%] min-h-full" />
+                  ) : (
+                    session?.user?.name || session?.user?.email
+                  )}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 side="top"
-                className="w-[--radix-popper-anchor-width] bg-popover cursor-pointer"
+                className="w-fit p-2 rounded-md bg-popover cursor-pointer"
               >
                 <DropdownMenuItem>
                   <SidebarMenuButton

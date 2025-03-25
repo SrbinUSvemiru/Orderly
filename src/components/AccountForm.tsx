@@ -23,18 +23,12 @@ import { User } from "@/types/user";
 import { updateUser } from "@/lib/updateUser";
 
 export const AccountForm = ({ user }: { user: User }) => {
-  //   const { data, error, isMutating } = useSWR(
-  //     "https://api.vercel.app/blog",
-  //     fetcher
-  //   );
   const [isMutating, setisMutating] = useState(false);
 
   const form = useForm<z.infer<typeof AccountSchema>>({
     resolver: zodResolver(AccountSchema),
     defaultValues: {
       email: user.email,
-      password: "",
-      confirmPassword: "",
       phone: user.phone,
       lastName: user.lastName || "",
       firstName: user.firstName,
@@ -51,11 +45,10 @@ export const AccountForm = ({ user }: { user: User }) => {
     });
     if (response?.error) {
       toast.error(response.error);
-      setisMutating(false);
     } else {
       toast.success("Account successfully updated!");
-      setisMutating(false);
     }
+    setisMutating(false);
   };
 
   return (
@@ -148,7 +141,11 @@ export const AccountForm = ({ user }: { user: User }) => {
             </FormItem>
           )}
         /> */}
-        <Button type="submit" className="w-full bg-green-700 cursor-pointer">
+        <Button
+          type="submit"
+          disabled={isMutating}
+          className="w-full bg-green-700 cursor-pointer"
+        >
           {isMutating && <Loader2 className="animate-spin" />}
           Save
         </Button>

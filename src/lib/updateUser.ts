@@ -2,6 +2,10 @@ import { User } from "@/types/user";
 
 export async function updateUser(userId: string, values: Partial<User>) {
   try {
+    if (!userId) {
+      throw new Error("No id provided");
+    }
+
     const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
       method: "PATCH",
       headers: {
