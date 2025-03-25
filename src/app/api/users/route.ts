@@ -64,10 +64,10 @@ export async function GET() {
     });
 
     if (users) {
-      return NextResponse.json({ users: users }, { status: 200 });
+      return NextResponse.json({ users }, { status: 200 });
     }
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.error("Error geting users:", error);
     return NextResponse.json(
       { message: "Internal Server Error", error: String(error) },
       { status: 500 }

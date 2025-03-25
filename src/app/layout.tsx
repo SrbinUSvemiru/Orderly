@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { GlobalModal } from "@/components/modal/GlobalModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,8 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SidebarProvider>
+            <GlobalModal />
+            <SidebarProvider defaultOpen={true}>
               <Toaster richColors />
               <main className="w-full">{children}</main>
             </SidebarProvider>

@@ -1,15 +1,17 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 import { db } from "../../../db/index";
 import { workflows } from "../../../db/schema";
 import { eq } from "drizzle-orm";
+import { getServerSession } from "next-auth";
+import { authConfig } from "@/db/auth";
 
 export async function POST(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    console.log("Decoded token:", token);
+    const session = await getServerSession(authConfig);
+
     const body = await req.json();
-    const { organizationId, name } = body;
+    const { name } = body;
+    const organizationId = "557fedce-7bc1-4081-9f01-ba1ac58d7c99";
 
     const workflow = await db
       .select()
@@ -27,6 +29,7 @@ export async function POST(req: NextRequest) {
     const newWorkflow = await db.insert(workflows).values({
       name: name,
       organizationId: organizationId,
+      owner: session?.user.id,
     });
 
     return NextResponse.json(
@@ -44,10 +47,10 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const workflows = await db.query.users.findMany();
+    const workflowsList = await db.query.workflows.findMany();
 
-    if (workflows) {
-      return NextResponse.json({ workflows: workflows }, { status: 200 });
+    if (workflowsList) {
+      return NextResponse.json([...workflowsList], { status: 200 });
     }
   } catch (error) {
     console.error("Error geting workflows:", error);
