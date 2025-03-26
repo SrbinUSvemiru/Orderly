@@ -1,0 +1,69 @@
+import { NextResponse, NextRequest } from "next/server";
+import { db } from "../../../db/index";
+import { stages } from "../../../db/schema";
+import { eq } from "drizzle-orm";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { name, weight, workflowId } = body;
+
+    const workflow = await db
+      .select()
+      .from(stages)
+      .where(eq(stages.name, name))
+      .then((res) => res[0]); // Drizzle returns an array
+
+    if (workflow) {
+      return NextResponse.json(
+        { workflow: null, message: "Workflow with this name already exists" },
+        { status: 409 }
+      );
+    }
+
+    const newStage = await db.insert(stages).values({
+      name: name,
+      weight: weight,
+      workflowId: workflowId,
+    });
+
+    return NextResponse.json(
+      { stage: newStage, message: "Stage created successfully" },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error creating workflow:", error);
+    return NextResponse.json(
+      { message: "Internal Server Error", error: String(error) },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      throw new Error("ID is required");
+    }
+    const stagesList = await db
+      .select()
+      .from(stages)
+      .where(eq(stages.workflowId, id))
+      .then((res) => res); // Drizzle returns an array
+
+    if (stagesList) {
+      return NextResponse.json([...stagesList], { status: 200 });
+    }
+    throw new Error("Error geting stages forom database");
+  } catch (error) {
+    console.error("Error geting stages:", error);
+
+    return NextResponse.json(
+      { message: "Internal Server Error", error: String(error) },
+      { status: 500 }
+    );
+  }
+}

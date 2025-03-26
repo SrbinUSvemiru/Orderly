@@ -3,6 +3,7 @@ import { create } from "zustand";
 export interface ModalData {
   title: string;
   message?: string;
+  workflowId?: string;
   action?: () => void;
   modalType: string;
   submitButton?: { label: string };
