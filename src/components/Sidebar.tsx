@@ -295,12 +295,15 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
+                <SidebarMenuButton className="h-fit">
                   <User2 />
                   {status === "loading" ? (
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
-                    session?.user?.name || session?.user?.email
+                    <div className="flex-col items-start justify-center">
+                    <p>{session?.user?.name}</p>
+                    <p>{session?.user?.email}</p>
+                    </div>
                   )}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
