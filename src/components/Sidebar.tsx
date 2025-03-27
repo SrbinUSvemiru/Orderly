@@ -267,7 +267,7 @@ export default function AppSidebar() {
   //     console.log(error);
   //   }
   // };
-  console.log(workflows);
+
   return (
     <Sidebar className="position-relative">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
@@ -301,8 +301,8 @@ export default function AppSidebar() {
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
                     <div className="flex-col items-start justify-center">
-                    <p>{session?.user?.name}</p>
-                    <p>{session?.user?.email}</p>
+                      <p>{session?.user?.name}</p>
+                      <p>{session?.user?.email}</p>
                     </div>
                   )}
                   <ChevronUp className="ml-auto" />
