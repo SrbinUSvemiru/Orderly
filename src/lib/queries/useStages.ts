@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import fetcher from "../fetcher";
+import { Stage as StageType } from "../../types/stage";
 
 type UseStagesProps = {
   method?: string;
@@ -7,15 +8,21 @@ type UseStagesProps = {
 };
 
 function useStages({ method = "GET", workflowId }: UseStagesProps) {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR<StageType[]>(
     `/api/stages?id=${workflowId}`,
-    (url) => fetcher(url, { method: method })
+    (url: string) => fetcher(url, { method: method }),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   return {
     stages: data,
     isLoading,
     isError: error,
+    mutate,
   };
 }
 

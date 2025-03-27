@@ -10,6 +10,7 @@ import {
 import { useModalStore } from "../../stores/modalStore";
 import { Workflow } from "./modalTypes/Workflow/workflow";
 import { Stage } from "./modalTypes/Stage/stage";
+import { Ticket } from "./modalTypes/Ticket/ticket";
 
 export function GlobalModal() {
   const { modalData, closeModal } = useModalStore();
@@ -29,6 +30,9 @@ export function GlobalModal() {
         )}
         {modalData.modalType === "stage" && (
           <Stage closeModal={closeModal} modalData={modalData} />
+        )}
+        {modalData.modalType === "ticket" && (
+          <Ticket closeModal={closeModal} modalData={modalData} />
         )}
       </DialogContent>
     </Dialog>
