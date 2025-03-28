@@ -30,6 +30,13 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+
 // import { toast } from "sonner";
 
 // import { Button } from "./ui/button";
@@ -295,14 +302,16 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="h-fit">
-                  <User2 />
+                <SidebarMenuButton className="h-full">
+                  <div>
+                    <User2 />
+                  </div>
                   {status === "loading" ? (
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
                     <div className="flex-col items-start justify-center">
-                      <p>{session?.user?.name}</p>
-                      <p>{session?.user?.email}</p>
+                    <p>{session?.user?.name}</p>
+                    <p>{session?.user?.email}</p>
                     </div>
                   )}
                   <ChevronUp className="ml-auto" />
