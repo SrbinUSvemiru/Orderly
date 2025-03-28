@@ -4,6 +4,7 @@ export interface ModalData {
   title: string;
   message?: string;
   workflowId?: string;
+  stageId?: string;
   action?: () => void;
   modalType: string;
   submitButton?: { label: string };

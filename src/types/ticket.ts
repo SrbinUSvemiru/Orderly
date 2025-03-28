@@ -1,8 +1,8 @@
-export type Workflow = {
+export type Ticket = {
   id: string;
-  owner: string;
   name: string;
-  organizationId: string;
+  stageId: string;
+  weight: number;
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
