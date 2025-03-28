@@ -274,7 +274,7 @@ export default function AppSidebar() {
   //     console.log(error);
   //   }
   // };
-
+  console.log(workflows);
   return (
     <Sidebar className="position-relative">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
@@ -302,16 +302,34 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="h-full">
+                <SidebarMenuButton className="h-fit">
                   <div>
                     <User2 />
                   </div>
                   {status === "loading" ? (
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
-                    <div className="flex-col items-start justify-center">
-                    <p>{session?.user?.name}</p>
-                    <p>{session?.user?.email}</p>
+                    <div className="flex-col items-start justify-center overflow-hidden">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+                              {session?.user?.name}
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent>{session?.user?.name}</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+                              {session?.user?.email}
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {session?.user?.email}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   )}
                   <ChevronUp className="ml-auto" />
