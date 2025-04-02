@@ -30,12 +30,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/Tooltip";
 
 // import { toast } from "sonner";
 
@@ -302,7 +297,7 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="h-fit">
+                <SidebarMenuButton className="h-[100%]">
                   <div>
                     <User2 />
                   </div>
@@ -310,34 +305,25 @@ export default function AppSidebar() {
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
                     <div className="flex-col items-start justify-center overflow-hidden">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-                              {session?.user?.name}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent>{session?.user?.name}</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-                              {session?.user?.email}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {session?.user?.email}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Tooltip text={`${session?.user?.name}` || ""}>
+                        <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+                          {session?.user?.name}
+                        </p>
+                      </Tooltip>
+                      <Tooltip text={`${session?.user?.email}` || ""}>
+                        <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+                          {session?.user?.email}
+                        </p>
+                      </Tooltip>
                     </div>
                   )}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
+                align="start"
                 side="top"
-                className="w-fit p-2 rounded-md bg-popover cursor-pointer"
+                className="w-60 p-2 rounded-md bg-popover cursor-pointer mb-[5px]"
               >
                 <DropdownMenuItem>
                   <SidebarMenuButton
