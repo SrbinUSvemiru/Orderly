@@ -9,7 +9,7 @@ export const RegisterSchema = z
       .min(8, "Password must have more than 8 characters"),
     confirmPassword: z.string().min(1, "Password confirmation is required"),
     firstName: z.string().min(2, "First name"),
-    lastName: z.string(),
+    lastName: z.string().min(2, "Last name"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
