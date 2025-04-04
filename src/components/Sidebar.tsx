@@ -28,14 +28,11 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+
+import { Tooltip } from "@/components/Tooltip";
 
 // import { toast } from "sonner";
 
@@ -62,6 +59,7 @@ import Link from "next/link";
 
 import { triggerModal } from "@/lib/triggerModal";
 
+// TYPES
 interface SidebarItem {
   id: string;
   url?: string;
@@ -82,6 +80,7 @@ interface SidebarItemProps {
 
 type SidebarItemType = "popover" | "collapsible" | "subitem";
 
+// Sta je tacno ovo?
 const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -110,7 +109,7 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
           )}
         </SidebarMenuButton>
       </CollapsibleTrigger>
-
+<DropdownMenu>
       <CollapsibleContent>
         <SidebarMenuSub>
           {item.subitems?.map((subitem) => (
@@ -125,6 +124,7 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
           ))}
         </SidebarMenuSub>
       </CollapsibleContent>
+      </DropdownMenu>
     </Collapsible>
   );
 };
@@ -244,11 +244,14 @@ const getItem = (item: SidebarItem) => {
 export default function AppSidebar() {
   const { data: session, status } = useSession();
   const { workflows } = useWorkflows();
+  const {state, toggleSidebar} = useSidebar();
 
   const sidebarItems = useMemo(
     () => (workflows ? getItems({ workflows }) : []),
     [workflows]
   );
+
+
 
   // const { data, error, isMutating } = useSWR(
   //   ["http://localhost:3000/api/workflow", { method: "GET" }],
@@ -274,13 +277,12 @@ export default function AppSidebar() {
   //     console.log(error);
   //   }
   // };
-  console.log(workflows);
   return (
-    <Sidebar className="position-relative">
+    <Sidebar className="position-relative" collapsible="icon">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
       <SidebarHeader className="p-4 flex-row items-center justify-start h-16">
         {/* <Button className="w-full" onClick={addOrg}>
-          Add org
+          Add org.
         </Button> */}
       </SidebarHeader>
       <Separator />
@@ -289,7 +291,7 @@ export default function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems?.map((item: SidebarItem) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} onClick={() => state === 'collapsed' ? toggleSidebar() : null}>
                   {getItem(item)}
                 </SidebarMenuItem>
               ))}
@@ -302,42 +304,27 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="h-fit">
-                  <div>
+                <SidebarMenuButton className="h-full cursor-pointer">
                     <User2 />
-                  </div>
                   {status === "loading" ? (
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
                     <div className="flex-col items-start justify-center overflow-hidden">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-                              {session?.user?.name}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent>{session?.user?.name}</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-                              {session?.user?.email}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {session?.user?.email}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Tooltip text={`${session?.user?.name}` || ""}>
+                        <p className="overflow-hidden truncate">{session?.user?.name}</p>
+                      </Tooltip>
+                      <Tooltip text={`${session?.user?.email}` || ""}>
+                        <p className="overflow-hidden truncate">{session?.user?.email}</p>
+                      </Tooltip>
                     </div>
                   )}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
+                align="start"
                 side="top"
-                className="w-fit p-2 rounded-md bg-popover cursor-pointer"
+                className="w-fit mb-[4px] p-2 rounded-md bg-popover cursor-pointer"
               >
                 <DropdownMenuItem>
                   <SidebarMenuButton
