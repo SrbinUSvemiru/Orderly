@@ -17,15 +17,18 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Button } from "../../../ui/button";
-import { ModalData } from "@/stores/modalStore";
+import { WorkflowModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
 
 interface WorkflowProps {
-  modalData: ModalData;
+  modalData: WorkflowModalData;
   closeModal: () => void;
 }
 
-export const Workflow: React.FC<WorkflowProps> = ({ closeModal }) => {
+export const Workflow: React.FC<WorkflowProps> = ({
+  closeModal,
+  modalData,
+}) => {
   const [isMutating, setMutating] = useState(false);
   const { mutate } = useSWRConfig();
 
@@ -48,6 +51,8 @@ export const Workflow: React.FC<WorkflowProps> = ({ closeModal }) => {
         },
         body: JSON.stringify({
           name: values.name,
+          organizationId: modalData.organizationId,
+          userId: modalData.userId,
         }),
       });
 

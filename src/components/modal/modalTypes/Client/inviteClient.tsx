@@ -3,7 +3,7 @@
 import { Input } from "../../../ui/input";
 import { toast } from "sonner";
 import { useState } from "react";
-import { StageSchema } from "./schema";
+import { InviteClient } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -16,49 +16,60 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Button } from "../../../ui/button";
-import { StageModalData } from "@/stores/modalStore";
+import { ClientModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
+import { useUserStore } from "@/stores/userStore";
 
-interface StageProps {
-  modalData: StageModalData;
+interface ClientProps {
+  modalData: ClientModalData;
   closeModal: () => void;
 }
 
-export const Stage: React.FC<StageProps> = ({
-  closeModal,
-  modalData: { action, workflowId },
-}) => {
+export const Client: React.FC<ClientProps> = ({ closeModal }) => {
   const [isMutating, setMutating] = useState(false);
 
-  const form = useForm<z.infer<typeof StageSchema>>({
-    resolver: zodResolver(StageSchema),
+  const user = useUserStore((state) => state.user);
+
+  console.log(user);
+
+  const form = useForm<z.infer<typeof InviteClient>>({
+    resolver: zodResolver(InviteClient),
     defaultValues: {
-      name: "",
+      email: "",
     },
   });
 
-  const nameValue = form.watch("name");
+  const nameValue = form.watch("email");
 
-  const onSubmit = async (values: z.infer<typeof StageSchema>) => {
+  const onSubmit = async (values: z.infer<typeof InviteClient>) => {
     setMutating(true);
     try {
-      const response = await fetch("/api/stages", {
+      if (!values?.email) {
+        throw new Error("No email provided");
+      }
+
+      const response = await fetch(`/api/invite-client`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: values.name,
-          workflowId: workflowId,
+          email: values.email,
+          organizationId: user.organizationId,
         }),
       });
 
-      if (response.ok) {
-        toast.success("Stage successfully created");
-        action?.();
-        closeModal();
+      const res = await response.json();
+
+      if (res.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(res.message);
       }
-    } catch {
+
+      closeModal();
+    } catch (error) {
+      console.error("Error sending email:", error);
       toast.error("Something went wrong");
     } finally {
       setMutating(false);
@@ -73,12 +84,12 @@ export const Stage: React.FC<StageProps> = ({
       >
         <FormField
           control={form.control}
-          name="name"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Example name" {...field} />
+                <Input placeholder="example@mail.com" {...field} />
               </FormControl>
               <FormMessage className="text-left" />
             </FormItem>
@@ -91,7 +102,7 @@ export const Stage: React.FC<StageProps> = ({
             disabled={isMutating || !nameValue}
           >
             {isMutating && <Loader2 className="animate-spin" />}
-            Create
+            Invite
           </Button>
           <Button
             disabled={isMutating}
