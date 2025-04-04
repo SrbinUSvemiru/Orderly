@@ -290,7 +290,7 @@ export default function AppSidebar() {
   //     console.log(error);
   //   }
   // };
-
+  console.log(workflows);
   return (
     <Sidebar className="position-relative">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
