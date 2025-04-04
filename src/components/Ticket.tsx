@@ -19,7 +19,13 @@ const Ticket: FC<{
   };
 
   return (
-    <div ref={setNodeRef} {...attributes} {...listeners} style={style}>
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
+      className="cursor-grab"
+    >
       <div className="w-full min-h-[100px] bg-amber-500 rounded-md">
         <div className="rounded-md px-2 py-1">
           <p>{ticket?.name}</p>

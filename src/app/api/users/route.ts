@@ -18,16 +18,13 @@ export async function POST(req: NextRequest) {
       .then((res) => res[0]); // Drizzle returns an array
 
     if (user) {
-      return NextResponse.json(
-        { user: null, message: "User with this mail already exists" },
-        { status: 409 }
-      );
+      throw new Error("User with this email already exists");
     }
     const hashedPassword = await hash(password, 10);
 
     const name = lastName ? `${firstName} ${lastName}` : firstName;
 
-    const newUser = await db.insert(users).values({
+    await db.insert(users).values({
       email: email,
       password: hashedPassword,
       firstName: firstName,
@@ -36,7 +33,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { user: newUser, message: "User created successfully" },
+      { message: "User created successfully" },
       { status: 201 }
     );
   } catch (error) {
@@ -57,7 +54,6 @@ export async function GET() {
         firstName: true,
         lastName: true,
         email: true,
-        type: true,
         image: true,
         organizationId: true,
       },

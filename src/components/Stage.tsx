@@ -13,13 +13,19 @@ import { triggerModal } from "@/lib/triggerModal";
 
 const Stage: FC<{
   stage: StageType;
+
   mutate: KeyedMutator<StageType[]>;
 }> = ({ stage, mutate }) => {
-  const { tickets, isLoading } = useTickets({
+  const {
+    tickets,
+    isLoading,
+    mutate: mutateTickets,
+  } = useTickets({
     stageId: `${stage.id}`,
   });
+
   useEffect(() => {
-    if (tickets?.length && !isLoading) {
+    if (tickets?.length) {
       mutate((currentData: StageType[] | undefined) => {
         if (!currentData?.length) return [];
 
@@ -41,6 +47,9 @@ const Stage: FC<{
                 title: "Create new ticket",
                 modalType: "ticket",
                 stageId: stage.id,
+                action: async () => {
+                  await mutateTickets();
+                },
               })
             }
             variant="ghost"

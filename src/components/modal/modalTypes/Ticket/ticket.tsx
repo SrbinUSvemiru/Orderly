@@ -1,5 +1,4 @@
 "use client";
-import { useSWRConfig } from "swr";
 
 import { Input } from "../../../ui/input";
 import { toast } from "sonner";
@@ -17,17 +16,19 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Button } from "../../../ui/button";
-import { ModalData } from "@/stores/modalStore";
+import { TicketModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
 
 interface StageProps {
-  modalData: ModalData;
+  modalData: TicketModalData;
   closeModal: () => void;
 }
 
-export const Ticket: React.FC<StageProps> = ({ closeModal, modalData }) => {
+export const Ticket: React.FC<StageProps> = ({
+  closeModal,
+  modalData: { action, stageId },
+}) => {
   const [isMutating, setMutating] = useState(false);
-  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof TicketSchema>>({
     resolver: zodResolver(TicketSchema),
@@ -48,13 +49,15 @@ export const Ticket: React.FC<StageProps> = ({ closeModal, modalData }) => {
         },
         body: JSON.stringify({
           name: values.name,
-          stageId: modalData.stageId,
+          stageId: stageId,
         }),
       });
 
       if (response.ok) {
         toast.success("Ticket successfully created");
-        mutate(`/api/tickets?id=${modalData.stageId}`);
+
+        if (action) action();
+
         closeModal();
       }
     } catch {

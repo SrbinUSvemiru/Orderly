@@ -11,6 +11,8 @@ import {
   ChevronDown,
   CirclePlus,
   LucideIcon,
+  Store,
+  Building2,
 } from "lucide-react";
 
 import { useMemo, useState } from "react";
@@ -38,7 +40,7 @@ import { Tooltip } from "@/components/Tooltip";
 
 // import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import { useSession } from "next-auth/react";
+
 import { signOut } from "next-auth/react";
 import {
   DropdownMenu,
@@ -58,6 +60,7 @@ import { Workflow as WorkflowType } from "@/types/workflow";
 import Link from "next/link";
 
 import { triggerModal } from "@/lib/triggerModal";
+import { useUserStore } from "@/stores/userStore";
 
 // TYPES
 interface SidebarItem {
@@ -78,7 +81,7 @@ interface SidebarItemProps {
   item: SidebarItem;
 }
 
-type SidebarItemType = "popover" | "collapsible" | "subitem";
+type SidebarItemType = "popover" | "collapsible" | "subitem" | "default";
 
 // Sta je tacno ovo?
 const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
@@ -133,14 +136,14 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <SidebarMenuButton asChild className="cursor-pointer">
-          {item.url ? (
-            <a href={item.url} className="w-full flex">
+        <SidebarMenuButton className="cursor-pointer">
+          {item?.url ? (
+            <Link href={item?.url} className="gap-2">
               <item.icon className="h-4 w-4 mr-1" />
               <span>{item.title}</span>
-            </a>
+            </Link>
           ) : (
-            <p className="w-full flex">
+            <p className="w-full flex gap-2">
               <item.icon className="h-4 w-4 mr-1" />
               <span>{item.title}</span>
               <ChevronRight className="h-4 w-4 ml-auto" />
@@ -188,12 +191,16 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
 // Menu items.
 const getItems = ({
   workflows,
+  organizationId,
+  userId,
 }: {
   workflows: WorkflowType[];
+  organizationId: string;
+  userId: string;
 }): SidebarItem[] => [
   {
     id: "1",
-    title: "Workflow",
+    title: "Dashboards",
     url: "",
     icon: Workflow,
     type: "popover",
@@ -201,7 +208,12 @@ const getItems = ({
       icon: CirclePlus,
       label: "Add",
       onClick: () =>
-        triggerModal({ title: "Create new workflow", modalType: "workflow" }),
+        triggerModal({
+          title: "Create new workflow",
+          modalType: "workflow",
+          organizationId: organizationId,
+          userId: userId,
+        }),
     },
     subitems: !workflows?.length
       ? []
@@ -215,6 +227,20 @@ const getItems = ({
   },
   {
     id: "2",
+    title: "Inventory",
+    url: "/inventory",
+    icon: Store,
+    type: "default",
+  },
+  {
+    id: "3",
+    title: "Clients",
+    url: "/clients",
+    icon: Building2,
+    type: "default",
+  },
+  {
+    id: "4",
     title: "Settings",
     url: "",
     icon: Settings,
@@ -231,24 +257,21 @@ const getItems = ({
   },
 ];
 
-const getItem = (item: SidebarItem) => {
-  const types: Record<SidebarItemType, JSX.Element> = {
-    popover: <SidebarPopoverItem item={item} />,
-    collapsible: <SidebarCollapsibleItem item={item} />, // Assuming this exists
-    subitem: <div>{/* render subitem if needed */}</div>,
-  };
-
-  return types[item.type] || null;
-};
-
 export default function AppSidebar() {
-  const { data: session, status } = useSession();
+  const user = useUserStore((state) => state.user);
   const { workflows } = useWorkflows();
   const {state, toggleSidebar} = useSidebar();
 
   const sidebarItems = useMemo(
-    () => (workflows ? getItems({ workflows }) : []),
-    [workflows]
+    () =>
+      workflows
+        ? getItems({
+            workflows,
+            organizationId: user?.organizationId,
+            userId: user?.id,
+          })
+        : [],
+    [workflows, user]
   );
 
 
@@ -292,7 +315,23 @@ export default function AppSidebar() {
             <SidebarMenu>
               {sidebarItems?.map((item: SidebarItem) => (
                 <SidebarMenuItem key={item.title} onClick={() => state === 'collapsed' ? toggleSidebar() : null}>
-                  {getItem(item)}
+                  {item?.type === "collapsible" && (
+                    <SidebarCollapsibleItem item={item} />
+                  )}
+                  {item?.type === "popover" && (
+                    <SidebarPopoverItem item={item} />
+                  )}
+                  {item?.type === "default" && (
+                    <SidebarMenuButton className="cursor-pointer">
+                      <Link
+                        href={item.url || ""}
+                        className=" flex w-full gap-2"
+                      >
+                        <item.icon className="h-4 w-4 mr-1" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -306,15 +345,15 @@ export default function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="h-full cursor-pointer">
                     <User2 />
-                  {status === "loading" ? (
+                  {!user ? (
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
                     <div className="flex-col items-start justify-center overflow-hidden">
-                      <Tooltip text={`${session?.user?.name}` || ""}>
-                        <p className="overflow-hidden truncate">{session?.user?.name}</p>
+                      <Tooltip text={`${user?.name}` || ""}>
+                        <p className="overflow-hidden truncate">{user?.name}</p>
                       </Tooltip>
-                      <Tooltip text={`${session?.user?.email}` || ""}>
-                        <p className="overflow-hidden truncate">{session?.user?.email}</p>
+                      <Tooltip text={`${user?.email}` || ""}>
+                        <p className="overflow-hidden truncate">{user?.email}</p>
                       </Tooltip>
                     </div>
                   )}

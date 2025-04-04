@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741794313636,
-      "tag": "0000_sloppy_trauma",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1741797208087,
-      "tag": "0001_glorious_black_queen",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1742235421865,
-      "tag": "0002_white_redwing",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1742470563013,
-      "tag": "0003_tiresome_barracuda",
+      "when": 1743693184653,
+      "tag": "0000_talented_silver_fox",
       "breakpoints": true
     }
   ]

@@ -10,6 +10,5 @@ export type User = {
   deletedAt: Date | null;
   active: boolean;
   organizationId: string | null;
-  type: string;
   image: string | null;
 };

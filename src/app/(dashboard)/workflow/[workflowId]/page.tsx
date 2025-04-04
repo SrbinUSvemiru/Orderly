@@ -74,6 +74,7 @@ function Workflows({ params }: { params: Promise<{ workflowId: string }> }) {
       title: "Workflows",
       type: "workflow",
       workflowId: `${workflowId}`,
+      action: async () => await mutate(),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

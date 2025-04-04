@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 function WorkflowsProvider() {
   useEffect(() => {
-    triggerHeader({ title: "Workflows", type: "workflow" });
+    triggerHeader({ title: "Workflows", type: "workflow", workflowId: "" });
   }, []);
   return (
     <DndContext>
