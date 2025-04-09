@@ -61,7 +61,6 @@ export async function GET() {
         firstName: true,
         lastName: true,
         email: true,
-        type: true,
         image: true,
         organizationId: true,
       },
