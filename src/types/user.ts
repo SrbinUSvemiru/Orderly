@@ -1,14 +1,15 @@
 export type User = {
   id: string;
   email: string;
-  phone: string;
+  phone?: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   name: string;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
   active: boolean;
-  organizationId: string | null;
-  image: string | null;
+  organizationId: string;
+  image?: string;
+  type: string;
 };

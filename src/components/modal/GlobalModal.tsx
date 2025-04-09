@@ -15,7 +15,7 @@ import { Client } from "./modalTypes/Client/inviteClient";
 
 export function GlobalModal() {
   const { modalData, closeModal } = useModalStore();
-  console.log(modalData);
+
   if (!modalData) return null;
 
   return (

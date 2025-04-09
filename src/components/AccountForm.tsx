@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "./ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -20,13 +20,14 @@ import { Input } from "./ui/input";
 
 import { Loader2 } from "lucide-react";
 import { useUserStore } from "@/stores/userStore";
-import { updateUser } from "@/lib/updateUser";
+import updateUser from "../lib/actions/updateUser";
+import { refetchUserInfo } from "@/lib/queryConnector";
+import AccountFormSkeleton from "./skeleton/accountForm";
 
 export const AccountForm = () => {
   const [isMutating, setisMutating] = useState(false);
 
   const user = useUserStore((state) => state.user);
-  const update = useUserStore((state) => state.update);
 
   const form = useForm<z.infer<typeof AccountSchema>>({
     resolver: zodResolver(AccountSchema),
@@ -38,24 +39,29 @@ export const AccountForm = () => {
     },
   });
 
+  const handleError = useCallback(
+    (errorMessage = "User update failed...") => {
+      toast.error(errorMessage);
+    },
+    [toast]
+  );
+
   const onSubmit = async (values: z.infer<typeof AccountSchema>) => {
     setisMutating(true);
-    const response = await updateUser(user.id, {
-      email: values.email,
-      phone: values.phone,
-      lastName: values.lastName || "",
-      firstName: values.firstName,
-    });
-    if (response?.error) {
-      toast.error(response.error);
-    } else {
-      toast.success("Account successfully updated!");
-      update({
+    const response = await updateUser(
+      user.id,
+      {
         email: values.email,
         phone: values.phone,
         lastName: values.lastName || "",
         firstName: values.firstName,
-      });
+      },
+      handleError
+    );
+
+    if (response?.success) {
+      toast.success("Account successfully updated!");
+      refetchUserInfo(user.id);
     }
     setisMutating(false);
   };
@@ -70,6 +76,10 @@ export const AccountForm = () => {
       });
     }
   }, [user, form.reset]);
+
+  if (!user?.id) {
+    return <AccountFormSkeleton />;
+  }
 
   return (
     <Form {...form}>

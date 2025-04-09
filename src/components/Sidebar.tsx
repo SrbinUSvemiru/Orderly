@@ -33,7 +33,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-
 import { Tooltip } from "@/components/Tooltip";
 
 // import { toast } from "sonner";
@@ -55,12 +54,12 @@ import {
 } from "./ui/collapsible";
 import { DropdownMenuSeparator } from "./ui/dropdown-menu";
 import { Skeleton } from "./ui/skeleton";
-import useWorkflows from "@/lib/queries/useWorkflows";
 import { Workflow as WorkflowType } from "@/types/workflow";
 import Link from "next/link";
 
 import { triggerModal } from "@/lib/triggerModal";
 import { useUserStore } from "@/stores/userStore";
+import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
 
 // TYPES
 interface SidebarItem {
@@ -112,21 +111,21 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
           )}
         </SidebarMenuButton>
       </CollapsibleTrigger>
-<DropdownMenu>
-      <CollapsibleContent>
-        <SidebarMenuSub>
-          {item.subitems?.map((subitem) => (
-            <SidebarMenuSubItem key={subitem.title}>
-              <SidebarMenuButton asChild>
-                <a href={subitem.url}>
-                  {subitem.icon && <subitem.icon />}
-                  <span>{subitem.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuSubItem>
-          ))}
-        </SidebarMenuSub>
-      </CollapsibleContent>
+      <DropdownMenu>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {item.subitems?.map((subitem) => (
+              <SidebarMenuSubItem key={subitem.title}>
+                <SidebarMenuButton asChild>
+                  <a href={subitem.url}>
+                    {subitem.icon && <subitem.icon />}
+                    <span>{subitem.title}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
       </DropdownMenu>
     </Collapsible>
   );
@@ -259,8 +258,9 @@ const getItems = ({
 
 export default function AppSidebar() {
   const user = useUserStore((state) => state.user);
-  const { workflows } = useWorkflows();
-  const {state, toggleSidebar} = useSidebar();
+
+  const { data: workflows } = useGetWorkflowsQuery();
+  const { state, toggleSidebar } = useSidebar();
 
   const sidebarItems = useMemo(
     () =>
@@ -274,32 +274,6 @@ export default function AppSidebar() {
     [workflows, user]
   );
 
-
-
-  // const { data, error, isMutating } = useSWR(
-  //   ["http://localhost:3000/api/workflow", { method: "GET" }],
-  //   fetcher
-  // );
-
-  // const addOrg = async () => {
-  //   try {
-  //     const response = await fetch("/api/organizations", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         name: "Home",
-  //       }),
-  //     });
-
-  //     if (response.ok) {
-  //       toast.success("Organization added");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   return (
     <Sidebar className="position-relative" collapsible="icon">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
@@ -314,7 +288,12 @@ export default function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems?.map((item: SidebarItem) => (
-                <SidebarMenuItem key={item.title} onClick={() => state === 'collapsed' ? toggleSidebar() : null}>
+                <SidebarMenuItem
+                  key={item.title}
+                  onClick={() =>
+                    state === "collapsed" ? toggleSidebar() : null
+                  }
+                >
                   {item?.type === "collapsible" && (
                     <SidebarCollapsibleItem item={item} />
                   )}
@@ -344,16 +323,22 @@ export default function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="h-full cursor-pointer">
-                    <User2 />
+                  <User2 />
                   {!user ? (
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
                     <div className="flex-col items-start justify-center overflow-hidden">
                       <Tooltip text={`${user?.name}` || ""}>
-                        <p className="overflow-hidden truncate">{user?.name}</p>
+                        <p className="overflow-hidden truncate">
+                          {user?.lastName
+                            ? `${user?.firstName} ${user?.lastName}`
+                            : user?.firstName}
+                        </p>
                       </Tooltip>
                       <Tooltip text={`${user?.email}` || ""}>
-                        <p className="overflow-hidden truncate">{user?.email}</p>
+                        <p className="overflow-hidden truncate">
+                          {user?.email}
+                        </p>
                       </Tooltip>
                     </div>
                   )}

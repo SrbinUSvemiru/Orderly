@@ -1,21 +1,36 @@
 "use client";
 
 import Stage from "@/components/Stage";
-import useStages from "@/lib/queries/useStages";
 import { triggerHeader } from "@/lib/triggerHeader";
 import { Stage as StageType } from "@/types/stage";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { Ticket as TicketType } from "@/types/ticket";
+import { Ticket, Ticket as TicketType } from "@/types/ticket";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { use } from "react";
 import { toast } from "sonner";
+import useGetStagesQuery from "@/lib/queries/useGetStagesQuery";
+import updateTicket, { UpdateTicketParams } from "@/lib/actions/updateTicket";
+import { useMutation } from "@tanstack/react-query";
+import DashboardSkeleton from "@/components/skeleton/dashboard";
 
 function Workflows({ params }: { params: Promise<{ workflowId: string }> }) {
   const { workflowId } = use(params);
+  const queryClient = useQueryClient();
 
-  const { stages, mutate, isLoading } = useStages({
-    workflowId: `${workflowId}`,
+  const { data: stages, isLoading } = useGetStagesQuery(workflowId, {
+    enabled: !!workflowId,
+  });
+
+  const mutation = useMutation<void, Error, UpdateTicketParams>({
+    mutationFn: updateTicket,
+    onSuccess: () => {
+      toast.success("Ticket successfully updated");
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
   });
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -24,72 +39,86 @@ function Workflows({ params }: { params: Promise<{ workflowId: string }> }) {
     const stageId = over?.id;
     const ticketId = active?.data?.current?.id;
 
-    if (active?.data?.current?.stageId === stageId) return;
-    mutate((currentData: StageType[] | undefined) => {
-      if (!currentData || !currentData.length) return [];
+    if (active?.data?.current?.stageId === stageId || !stageId) return;
 
-      return currentData?.map((s) => {
-        if (s?.id !== stageId) {
-          const newTickets = s.tickets
-            ? s.tickets.filter((el) => el.id !== ticketId)
-            : [];
-          return {
-            ...s,
-            tickets: newTickets,
-          };
-        } else {
-          const newTickets = [
-            ...(s.tickets || []),
-            { ...active.data.current, stageId: stageId } as TicketType,
-          ];
+    // Optimistically update the cache
+    queryClient.setQueryData(
+      ["stages", workflowId],
+      (currentData: StageType[] | undefined) => {
+        if (!currentData) return [];
 
-          return {
-            ...s,
-            tickets: newTickets,
-          };
-        }
-      });
-    }, false); // Set false to avoid automatic revalidation
-    try {
-      const response = await fetch(`/api/tickets?id=${ticketId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          stageId: stageId,
-        }),
-      });
-
-      if (response.ok) {
-        toast.success("Ticket successfully updated");
+        return currentData.map((s) => {
+          if (s.id !== stageId) {
+            return {
+              ...s,
+              tickets: s.tickets?.filter((t) => t.id !== ticketId) || [],
+            };
+          } else {
+            return {
+              ...s,
+              tickets: [
+                ...(s.tickets || []),
+                {
+                  ...active.data.current,
+                  stageId,
+                } as TicketType,
+              ],
+            };
+          }
+        });
       }
+    );
+
+    try {
+      await mutation.mutateAsync({
+        ticketId,
+        values: { stageId: String(stageId) },
+      });
     } catch {
-      mutate();
-      toast.error("Something went wrong");
+      // Rollback on error: refetch stages
+      queryClient.invalidateQueries({ queryKey: ["stages", workflowId] });
     }
   };
+
+  const initialStagesMutation = useCallback((id: string, tickets: Ticket[]) => {
+    queryClient.setQueryData(
+      ["stages", workflowId],
+      (currentData: StageType[] | undefined) => {
+        if (!currentData?.length) return [];
+
+        return currentData?.map((s) =>
+          s.id === id ? { ...s, tickets: [...tickets] } : s
+        );
+      }
+    );
+  }, []);
+
   useEffect(() => {
     triggerHeader({
       title: "Workflows",
       type: "workflow",
       workflowId: `${workflowId}`,
-      action: async () => await mutate(),
+      action: async () => {},
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
-
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="flex gap-x-4 h-full w-full">
-        {stages?.map((el: StageType) => (
-          <Stage stage={el} key={el.id} mutate={mutate} />
-        ))}
-      </div>
+      {isLoading || !stages?.length ? (
+        <DashboardSkeleton />
+      ) : (
+        <div className="flex gap-x-4 h-full w-full">
+          {stages?.map((el: StageType, index) => (
+            <Stage
+              stage={el}
+              index={index + 1}
+              key={el.id}
+              initialStagesMutation={initialStagesMutation}
+            />
+          ))}
+        </div>
+      )}
     </DndContext>
   );
 }

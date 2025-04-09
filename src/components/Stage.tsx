@@ -7,34 +7,26 @@ import { Ticket as TicketType } from "@/types/ticket";
 import Ticket from "./Ticket";
 import { Button } from "./ui/button";
 import { CirclePlus } from "lucide-react";
-import { KeyedMutator } from "swr";
-import useTickets from "../lib/queries/useTickets";
+
 import { triggerModal } from "@/lib/triggerModal";
+import useGetTicketsQuery from "@/lib/queries/useGetTicketsQuery";
 
-const Stage: FC<{
+type StageProps = {
+  index: number;
   stage: StageType;
+  initialStagesMutation: (id: string, tickets: TicketType[]) => void;
+};
 
-  mutate: KeyedMutator<StageType[]>;
-}> = ({ stage, mutate }) => {
-  const {
-    tickets,
-    isLoading,
-    mutate: mutateTickets,
-  } = useTickets({
-    stageId: `${stage.id}`,
+const Stage: FC<StageProps> = ({ stage, initialStagesMutation }) => {
+  const { data: tickets, isLoading } = useGetTicketsQuery(stage.id, {
+    enabled: !!stage.id,
   });
 
   useEffect(() => {
     if (tickets?.length) {
-      mutate((currentData: StageType[] | undefined) => {
-        if (!currentData?.length) return [];
-
-        return currentData?.map((s) =>
-          s.id === stage.id ? { ...s, tickets: [...tickets] } : s
-        );
-      }, false);
+      initialStagesMutation(stage.id, tickets);
     }
-  }, [isLoading, tickets, stage.id, mutate]);
+  }, [isLoading, tickets, stage.id]);
 
   return (
     <Droppable id={stage.id}>
@@ -47,9 +39,6 @@ const Stage: FC<{
                 title: "Create new ticket",
                 modalType: "ticket",
                 stageId: stage.id,
-                action: async () => {
-                  await mutateTickets();
-                },
               })
             }
             variant="ghost"

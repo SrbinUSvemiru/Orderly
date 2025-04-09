@@ -24,9 +24,9 @@ const Ticket: FC<{
       {...attributes}
       {...listeners}
       style={style}
-      className="cursor-grab"
+      className="cursor-grab transition duration-300 ease-out"
     >
-      <div className="w-full min-h-[100px] bg-amber-500 rounded-md">
+      <div className="w-full min-h-[100px] animate-in bg-accent border-1 border-amber-500 rounded-md">
         <div className="rounded-md px-2 py-1">
           <p>{ticket?.name}</p>
         </div>

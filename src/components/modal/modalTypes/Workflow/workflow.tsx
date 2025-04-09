@@ -1,5 +1,4 @@
 "use client";
-import { useSWRConfig } from "swr";
 
 import { Input } from "../../../ui/input";
 import { toast } from "sonner";
@@ -19,6 +18,9 @@ import {
 import { Button } from "../../../ui/button";
 import { WorkflowModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
+import addWorkflow from "@/lib/actions/addWorkflow";
+import { useCallback } from "react";
+import { refetchWorkflows } from "@/lib/queryConnector";
 
 interface WorkflowProps {
   modalData: WorkflowModalData;
@@ -30,7 +32,6 @@ export const Workflow: React.FC<WorkflowProps> = ({
   modalData,
 }) => {
   const [isMutating, setMutating] = useState(false);
-  const { mutate } = useSWRConfig();
 
   const form = useForm<z.infer<typeof WorkflowSchema>>({
     resolver: zodResolver(WorkflowSchema),
@@ -41,30 +42,26 @@ export const Workflow: React.FC<WorkflowProps> = ({
 
   const nameValue = form.watch("name");
 
+  const handleError = useCallback(
+    (errorMessage = "User update failed...") => {
+      toast.error(errorMessage);
+    },
+    [toast]
+  );
+
   const onSubmit = async (values: z.infer<typeof WorkflowSchema>) => {
     setMutating(true);
-    try {
-      const response = await fetch("/api/workflows", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: values.name,
-          organizationId: modalData.organizationId,
-          userId: modalData.userId,
-        }),
-      });
+    const response = await addWorkflow({
+      name: values.name,
+      organizationId: modalData.organizationId,
+      userId: modalData.userId,
+      handleError,
+    });
 
-      if (response.ok) {
-        toast.success("Workflow successfully created");
-        mutate("/api/workflows");
-        closeModal();
-      }
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setMutating(false);
+    if (response.success) {
+      toast.success(response.message);
+      refetchWorkflows();
+      closeModal();
     }
   };
 

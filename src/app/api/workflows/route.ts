@@ -21,14 +21,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newWorkflow = await db.insert(workflows).values({
+    await db.insert(workflows).values({
       name: name,
       organizationId: organizationId,
       owner: userId,
     });
 
     return NextResponse.json(
-      { user: newWorkflow, message: "Workflow created successfully" },
+      { success: true, message: "Workflow created successfully" },
       { status: 201 }
     );
   } catch (error) {
@@ -46,6 +46,11 @@ export async function GET() {
 
     if (workflowsList) {
       return NextResponse.json([...workflowsList], { status: 200 });
+    } else {
+      return NextResponse.json(
+        { message: "No workflows found" },
+        { status: 404 } // Return 404 if no workflows are found
+      );
     }
   } catch (error) {
     console.error("Error geting workflows:", error);
