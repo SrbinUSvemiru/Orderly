@@ -1,10 +1,9 @@
 "use client";
-import { useSWRConfig } from "swr";
 
 import { Input } from "../../../ui/input";
 import { toast } from "sonner";
 import { useState } from "react";
-import { WorkflowSchema } from "./schema";
+import { StageSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -17,23 +16,22 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Button } from "../../../ui/button";
-import { WorkflowModalData } from "@/stores/modalStore";
+import { StageModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
 
-interface WorkflowProps {
-  modalData: WorkflowModalData;
+interface StageProps {
+  modalData: StageModalData;
   closeModal: () => void;
 }
 
-export const Workflow: React.FC<WorkflowProps> = ({
+export const Stage: React.FC<StageProps> = ({
   closeModal,
-  modalData,
+  modalData: { action, workflowId },
 }) => {
   const [isMutating, setMutating] = useState(false);
-  const { mutate } = useSWRConfig();
 
-  const form = useForm<z.infer<typeof WorkflowSchema>>({
-    resolver: zodResolver(WorkflowSchema),
+  const form = useForm<z.infer<typeof StageSchema>>({
+    resolver: zodResolver(StageSchema),
     defaultValues: {
       name: "",
     },
@@ -41,24 +39,23 @@ export const Workflow: React.FC<WorkflowProps> = ({
 
   const nameValue = form.watch("name");
 
-  const onSubmit = async (values: z.infer<typeof WorkflowSchema>) => {
+  const onSubmit = async (values: z.infer<typeof StageSchema>) => {
     setMutating(true);
     try {
-      const response = await fetch("/api/workflows", {
+      const response = await fetch("/api/stages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: values.name,
-          organizationId: modalData.organizationId,
-          userId: modalData.userId,
+          workflowId: workflowId,
         }),
       });
 
       if (response.ok) {
-        toast.success("Workflow successfully created");
-        mutate("/api/workflows");
+        toast.success("Stage successfully created");
+        action?.();
         closeModal();
       }
     } catch {

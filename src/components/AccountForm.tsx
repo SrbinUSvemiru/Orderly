@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -19,11 +19,14 @@ import {
 import { Input } from "./ui/input";
 
 import { Loader2 } from "lucide-react";
-import { User } from "@/types/user";
+import { useUserStore } from "@/stores/userStore";
 import { updateUser } from "@/lib/updateUser";
 
-export const AccountForm = ({ user }: { user: User }) => {
+export const AccountForm = () => {
   const [isMutating, setisMutating] = useState(false);
+
+  const user = useUserStore((state) => state.user);
+  const update = useUserStore((state) => state.update);
 
   const form = useForm<z.infer<typeof AccountSchema>>({
     resolver: zodResolver(AccountSchema),
@@ -47,9 +50,26 @@ export const AccountForm = ({ user }: { user: User }) => {
       toast.error(response.error);
     } else {
       toast.success("Account successfully updated!");
+      update({
+        email: values.email,
+        phone: values.phone,
+        lastName: values.lastName || "",
+        firstName: values.firstName,
+      });
     }
     setisMutating(false);
   };
+
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        email: user.email || "",
+        phone: user.phone || "",
+        lastName: user.lastName || "",
+        firstName: user.firstName || "",
+      });
+    }
+  }, [user, form.reset]);
 
   return (
     <Form {...form}>
@@ -87,7 +107,6 @@ export const AccountForm = ({ user }: { user: User }) => {
         <FormField
           control={form.control}
           name="email"
-          disabled={true}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>

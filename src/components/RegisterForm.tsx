@@ -14,12 +14,19 @@ import {
   FormControl,
   FormField,
 } from "./ui/form";
-
+import { useEffect } from "react";
 import { Input } from "./ui/input";
-import GoogleSignInButton from "./GoogleSignInButton";
+
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
+
+import { verifyToken } from "@/lib/encryption";
 
 export const RegisterForm = () => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
   const router = useRouter();
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -33,7 +40,19 @@ export const RegisterForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
+    const getToken = (token: string) => {
+      const data = verifyToken(token);
+      return data;
+    };
+    if (token) {
+      const data = getToken(token);
+      form.reset({
+        email: data?.email || "",
+      });
+    }
     try {
+      const expirationTime = Date.now() + 3600000;
+
       const response = await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -45,16 +64,32 @@ export const RegisterForm = () => {
           firstName: values.firstName,
           lastName: values.lastName,
           confirmPassword: values.confirmPassword,
+          emailVerificationExpires: new Date(expirationTime),
         }),
       });
 
       if (response.ok) {
         router.push("/sign-in");
+      } else {
+        toast.error(response.ok);
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const getToken = (token: string) => {
+      const data = verifyToken(token);
+      return data;
+    };
+    if (token) {
+      const data = getToken(token);
+      form.reset({
+        email: data?.email || "",
+      });
+    }
+  }, [token]);
 
   return (
     <Form {...form}>
@@ -136,7 +171,6 @@ export const RegisterForm = () => {
       <div className="mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400 ">
         or
       </div>
-      <GoogleSignInButton>Sign up with google</GoogleSignInButton>
     </Form>
   );
 };

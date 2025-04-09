@@ -1,4 +1,4 @@
-export interface User {
+export type User = {
   id: string;
   email: string;
   phone: string;
@@ -10,6 +10,5 @@ export interface User {
   deletedAt: Date | null;
   active: boolean;
   organizationId: string | null;
-  type: string;
   image: string | null;
-}
+};

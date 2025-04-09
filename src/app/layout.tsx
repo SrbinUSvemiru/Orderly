@@ -6,6 +6,7 @@ import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GlobalModal } from "@/components/modal/GlobalModal";
+import { ZustandProvider } from "@/components/providers/ZustandProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,18 +34,20 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <GlobalModal />
-            <SidebarProvider defaultOpen={true}>
-              <Toaster richColors />
-              <main className="w-full">{children}</main>
-            </SidebarProvider>
-          </ThemeProvider>
+          <ZustandProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <GlobalModal />
+              <SidebarProvider defaultOpen={true}>
+                <Toaster richColors />
+                <main className="w-full">{children}</main>
+              </SidebarProvider>
+            </ThemeProvider>
+          </ZustandProvider>
         </AuthProvider>
       </body>
     </html>

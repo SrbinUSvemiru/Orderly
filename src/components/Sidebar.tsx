@@ -11,6 +11,8 @@ import {
   ChevronDown,
   CirclePlus,
   LucideIcon,
+  Store,
+  Building2,
 } from "lucide-react";
 
 import { useMemo, useState } from "react";
@@ -28,13 +30,17 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
+
+
+import { Tooltip } from "@/components/Tooltip";
 
 // import { toast } from "sonner";
 
 // import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
-import { useSession } from "next-auth/react";
+
 import { signOut } from "next-auth/react";
 import {
   DropdownMenu,
@@ -54,7 +60,9 @@ import { Workflow as WorkflowType } from "@/types/workflow";
 import Link from "next/link";
 
 import { triggerModal } from "@/lib/triggerModal";
+import { useUserStore } from "@/stores/userStore";
 
+// TYPES
 interface SidebarItem {
   id: string;
   url?: string;
@@ -73,8 +81,9 @@ interface SidebarItemProps {
   item: SidebarItem;
 }
 
-type SidebarItemType = "popover" | "collapsible" | "subitem";
+type SidebarItemType = "popover" | "collapsible" | "subitem" | "default";
 
+// Sta je tacno ovo?
 const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -103,7 +112,7 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
           )}
         </SidebarMenuButton>
       </CollapsibleTrigger>
-
+<DropdownMenu>
       <CollapsibleContent>
         <SidebarMenuSub>
           {item.subitems?.map((subitem) => (
@@ -118,6 +127,7 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
           ))}
         </SidebarMenuSub>
       </CollapsibleContent>
+      </DropdownMenu>
     </Collapsible>
   );
 };
@@ -126,14 +136,14 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <SidebarMenuButton asChild className="cursor-pointer">
-          {item.url ? (
-            <a href={item.url} className="w-full flex">
+        <SidebarMenuButton className="cursor-pointer">
+          {item?.url ? (
+            <Link href={item?.url} className="gap-2">
               <item.icon className="h-4 w-4 mr-1" />
               <span>{item.title}</span>
-            </a>
+            </Link>
           ) : (
-            <p className="w-full flex">
+            <p className="w-full flex gap-2">
               <item.icon className="h-4 w-4 mr-1" />
               <span>{item.title}</span>
               <ChevronRight className="h-4 w-4 ml-auto" />
@@ -181,12 +191,16 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
 // Menu items.
 const getItems = ({
   workflows,
+  organizationId,
+  userId,
 }: {
   workflows: WorkflowType[];
+  organizationId: string;
+  userId: string;
 }): SidebarItem[] => [
   {
     id: "1",
-    title: "Workflow",
+    title: "Dashboards",
     url: "",
     icon: Workflow,
     type: "popover",
@@ -194,7 +208,12 @@ const getItems = ({
       icon: CirclePlus,
       label: "Add",
       onClick: () =>
-        triggerModal({ title: "Create new workflow", modalType: "workflow" }),
+        triggerModal({
+          title: "Create new workflow",
+          modalType: "workflow",
+          organizationId: organizationId,
+          userId: userId,
+        }),
     },
     subitems: !workflows?.length
       ? []
@@ -208,6 +227,20 @@ const getItems = ({
   },
   {
     id: "2",
+    title: "Inventory",
+    url: "/inventory",
+    icon: Store,
+    type: "default",
+  },
+  {
+    id: "3",
+    title: "Clients",
+    url: "/clients",
+    icon: Building2,
+    type: "default",
+  },
+  {
+    id: "4",
     title: "Settings",
     url: "",
     icon: Settings,
@@ -224,24 +257,24 @@ const getItems = ({
   },
 ];
 
-const getItem = (item: SidebarItem) => {
-  const types: Record<SidebarItemType, JSX.Element> = {
-    popover: <SidebarPopoverItem item={item} />,
-    collapsible: <SidebarCollapsibleItem item={item} />, // Assuming this exists
-    subitem: <div>{/* render subitem if needed */}</div>,
-  };
-
-  return types[item.type] || null;
-};
-
 export default function AppSidebar() {
-  const { data: session, status } = useSession();
+  const user = useUserStore((state) => state.user);
   const { workflows } = useWorkflows();
+  const {state, toggleSidebar} = useSidebar();
 
   const sidebarItems = useMemo(
-    () => (workflows ? getItems({ workflows }) : []),
-    [workflows]
+    () =>
+      workflows
+        ? getItems({
+            workflows,
+            organizationId: user?.organizationId,
+            userId: user?.id,
+          })
+        : [],
+    [workflows, user]
   );
+
+
 
   // const { data, error, isMutating } = useSWR(
   //   ["http://localhost:3000/api/workflow", { method: "GET" }],
@@ -267,13 +300,12 @@ export default function AppSidebar() {
   //     console.log(error);
   //   }
   // };
-  console.log(workflows);
   return (
-    <Sidebar className="position-relative">
+    <Sidebar className="position-relative" collapsible="icon">
       <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
       <SidebarHeader className="p-4 flex-row items-center justify-start h-16">
         {/* <Button className="w-full" onClick={addOrg}>
-          Add org
+          Add org.
         </Button> */}
       </SidebarHeader>
       <Separator />
@@ -282,8 +314,24 @@ export default function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems?.map((item: SidebarItem) => (
-                <SidebarMenuItem key={item.title}>
-                  {getItem(item)}
+                <SidebarMenuItem key={item.title} onClick={() => state === 'collapsed' ? toggleSidebar() : null}>
+                  {item?.type === "collapsible" && (
+                    <SidebarCollapsibleItem item={item} />
+                  )}
+                  {item?.type === "popover" && (
+                    <SidebarPopoverItem item={item} />
+                  )}
+                  {item?.type === "default" && (
+                    <SidebarMenuButton className="cursor-pointer">
+                      <Link
+                        href={item.url || ""}
+                        className=" flex w-full gap-2"
+                      >
+                        <item.icon className="h-4 w-4 mr-1" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -295,22 +343,27 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="h-fit">
-                  <User2 />
-                  {status === "loading" ? (
+                <SidebarMenuButton className="h-full cursor-pointer">
+                    <User2 />
+                  {!user ? (
                     <Skeleton className="min-w-[90%] min-h-full" />
                   ) : (
-                    <div className="flex-col items-start justify-center">
-                    <p>{session?.user?.name}</p>
-                    <p>{session?.user?.email}</p>
+                    <div className="flex-col items-start justify-center overflow-hidden">
+                      <Tooltip text={`${user?.name}` || ""}>
+                        <p className="overflow-hidden truncate">{user?.name}</p>
+                      </Tooltip>
+                      <Tooltip text={`${user?.email}` || ""}>
+                        <p className="overflow-hidden truncate">{user?.email}</p>
+                      </Tooltip>
                     </div>
                   )}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
+                align="start"
                 side="top"
-                className="w-fit p-2 rounded-md bg-popover cursor-pointer"
+                className="w-fit mb-[4px] p-2 rounded-md bg-popover cursor-pointer"
               >
                 <DropdownMenuItem>
                   <SidebarMenuButton

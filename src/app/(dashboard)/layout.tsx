@@ -1,18 +1,19 @@
 import { Separator } from "@/components/ui/separator";
 import AppSidebar from "@/components/Sidebar";
-import { ModeToggle } from "@/components/ModeToggle";
+
+import Header from "@/components/header/Header";
 
 async function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex">
       <AppSidebar />
-      <div className="flex flex-1 flex-col min-h-screen">
-        <header className="flex items-center justify-end  px-6 py-4 h-[64px]">
-          <ModeToggle />
-        </header>
+      <div className="flex flex-1 flex-col min-h-screen overflow-hidden">
+        <Header />
         <Separator />
-        <div className="overflow-auto h-full">
-          <div className="flex-1  p-4 text-accent-foreground">{children}</div>
+        <div className="overflow-hidden h-full flex">
+          <div className="flex-1 overflow-auto p-4 text-accent-foreground">
+            {children}
+          </div>
         </div>
       </div>
     </div>

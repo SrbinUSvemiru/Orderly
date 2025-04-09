@@ -11,7 +11,10 @@ import {
 
 import { relations } from "drizzle-orm";
 
-export const UserTypeEnum = pgEnum("type", ["client", "employee"]);
+export const organizationTypeEnum = pgEnum("organization_type", [
+  "enterprise",
+  "client",
+]);
 
 const timestamps = {
   createdAt: timestamp("created_at").defaultNow(),
@@ -26,6 +29,7 @@ export const organizations = pgTable("organizations", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
   owner: text().notNull(),
+  type: organizationTypeEnum().notNull().default("client"),
   ...timestamps,
 });
 
@@ -37,17 +41,14 @@ export const organizationRelations = relations(organizations, ({ many }) => ({
 export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
   email: varchar().unique().notNull(),
-  phone: text().unique().default(""),
-  firstName: text().default(""),
-  lastName: text().default(""),
+  phone: text().unique(),
+  firstName: text("first_name").default(""),
+  lastName: text("last_name").default(""),
   name: text().default(""),
   password: varchar().notNull(),
-  organizationId: uuid("organization_id")
-    .references(() => organizations.id, {
-      onDelete: "cascade",
-    })
-    .default(""),
-  type: UserTypeEnum().notNull().default("client"),
+  organizationId: uuid("organization_id").references(() => organizations.id, {
+    onDelete: "cascade",
+  }),
   image: text().default(""),
   active: boolean().notNull().default(true),
   ...timestamps,
@@ -92,6 +93,14 @@ export const stages = pgTable("stages", {
     .references(() => workflows.id, {
       onDelete: "cascade",
     }),
+  active: boolean().notNull().default(true),
+  ...timestamps,
+});
+
+export const labels = pgTable("labels", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: text().notNull().default(""),
+  weight: integer().default(0),
   active: boolean().notNull().default(true),
   ...timestamps,
 });

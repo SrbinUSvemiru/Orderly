@@ -1,10 +1,13 @@
-export type Workflow = {
+import { Ticket } from "./ticket";
+
+export type Stage = {
   id: string;
-  owner: string;
   name: string;
-  organizationId: string;
+  tickets?: Ticket[];
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
   active: boolean;
+  workflowId: string;
+  weight: number;
 };
