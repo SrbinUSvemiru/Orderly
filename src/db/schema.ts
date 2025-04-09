@@ -126,9 +126,10 @@ export const tickets = pgTable("tickets", {
   ...timestamps,
 });
 
-export const ticketRelations = relations(tickets, ({ one }) => ({
+export const ticketRelations = relations(tickets, ({ one, many }) => ({
   stage: one(stages, {
     fields: [tickets.stageId],
     references: [stages.id],
   }),
+  labels: many(labels),
 }));

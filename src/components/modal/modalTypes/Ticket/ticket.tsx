@@ -18,6 +18,8 @@ import {
 import { Button } from "../../../ui/button";
 import { TicketModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
+import addTicket from "@/lib/actions/addTicket";
+import { refetchTickets } from "@/lib/queryConnector";
 
 interface StageProps {
   modalData: TicketModalData;
@@ -26,7 +28,7 @@ interface StageProps {
 
 export const Ticket: React.FC<StageProps> = ({
   closeModal,
-  modalData: { action, stageId },
+  modalData: { stageId },
 }) => {
   const [isMutating, setMutating] = useState(false);
 
@@ -41,29 +43,17 @@ export const Ticket: React.FC<StageProps> = ({
 
   const onSubmit = async (values: z.infer<typeof TicketSchema>) => {
     setMutating(true);
-    try {
-      const response = await fetch("/api/tickets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: values.name,
-          stageId: stageId,
-        }),
-      });
 
-      if (response.ok) {
-        toast.success("Ticket successfully created");
+    const response = await addTicket({
+      name: values.name,
+      stageId: stageId,
+      handleError: () => toast.error("Something went wrong"),
+    });
 
-        if (action) action();
-
-        closeModal();
-      }
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setMutating(false);
+    if (response.success) {
+      toast.success("Ticket successfully created");
+      refetchTickets(stageId);
+      closeModal();
     }
   };
 

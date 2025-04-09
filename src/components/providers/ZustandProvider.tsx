@@ -1,5 +1,6 @@
 "use client";
 
+import useGetUserInfoQuery from "@/lib/queries/useGetUserInfoQuery";
 import { useHeaderStore } from "@/stores/headerStore";
 import { useModalStore } from "@/stores/modalStore";
 import { useUserStore } from "@/stores/userStore";
@@ -25,24 +26,15 @@ export const ZustandProvider: React.FC<ZustandProviderProps> = ({
   const { data: session } = useSession();
   const setUser = useUserStore((state) => state.setUser);
 
-  useEffect(() => {
-    if (!session?.user?.id) return;
-    async function fetchUser() {
-      const user = await fetch(
-        `http://localhost:3000/api/users/${session?.user?.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const response = await user.json();
-      setUser(response);
-    }
+  const { data, isLoading } = useGetUserInfoQuery(
+    session?.user?.id ? session?.user?.id : "",
+    { enabled: !!session?.user?.id }
+  );
 
-    fetchUser();
-  }, [session?.user?.id, setUser]);
+  useEffect(() => {
+    if (isLoading || !data) return;
+    setUser(data);
+  }, [isLoading, data]);
 
   return (
     <ZustandContext.Provider

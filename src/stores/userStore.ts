@@ -1,21 +1,6 @@
 "use client";
 import { create } from "zustand";
-
-export interface User {
-  id: string;
-  email: string;
-  phone: string;
-  firstName: string;
-  lastName: string;
-  name: string;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
-  active: boolean;
-  organizationId: string;
-  type: string;
-  image: string;
-}
+import { User } from "../types/user";
 
 interface UserStore {
   user: User;
@@ -30,9 +15,9 @@ const defaultInitState: User = {
   firstName: "",
   lastName: "",
   name: "",
-  createdAt: null,
-  updatedAt: null,
-  deletedAt: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: undefined,
   active: false,
   organizationId: "",
   type: "",

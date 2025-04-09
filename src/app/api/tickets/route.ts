@@ -9,13 +9,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, stageId } = body;
 
-    const newTicket = await db.insert(tickets).values({
+    await db.insert(tickets).values({
       name: name,
       stageId: stageId,
     });
 
     return NextResponse.json(
-      { ticket: newTicket, message: "Ticket created successfully" },
+      { success: true, message: "Ticket created successfully" },
       { status: 201 }
     );
   } catch (error) {
@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest) {
 
     if (!id) {
       return NextResponse.json(
-        { user: null, message: "ID is required" },
+        { success: false, message: "ID is required" },
         { status: 400 }
       );
     }
@@ -74,13 +74,7 @@ export async function PATCH(req: NextRequest) {
       .set({ ...updateData }) // Update only provided fields
       .where(eq(tickets.id, id));
 
-    const updatedTicket = await db
-      .select()
-      .from(tickets)
-      .where(eq(tickets.id, id))
-      .then((res) => res[0]);
-
-    return NextResponse.json({ ...updatedTicket }, { status: 200 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error("Error updating ticket:", error);
     return NextResponse.json(
