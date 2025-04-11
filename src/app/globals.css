@@ -45,6 +45,7 @@
   --radius-xl: calc(var(--radius) + 4px);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in-ticket: fadeInTicket 0.2s ease-out;
 
   @keyframes accordion-down {
     from {
@@ -62,6 +63,17 @@
     to {
       height: 0;
     }
+  }
+}
+
+@keyframes fadeInTicket {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

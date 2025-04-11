@@ -18,6 +18,8 @@ import {
 import { Button } from "../../../ui/button";
 import { StageModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
+import addStage from "@/lib/actions/addStage";
+import { refetchStages } from "@/lib/queryConnector";
 
 interface StageProps {
   modalData: StageModalData;
@@ -26,7 +28,7 @@ interface StageProps {
 
 export const Stage: React.FC<StageProps> = ({
   closeModal,
-  modalData: { action, workflowId },
+  modalData: { workflowId },
 }) => {
   const [isMutating, setMutating] = useState(false);
 
@@ -41,28 +43,21 @@ export const Stage: React.FC<StageProps> = ({
 
   const onSubmit = async (values: z.infer<typeof StageSchema>) => {
     setMutating(true);
-    try {
-      const response = await fetch("/api/stages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: values.name,
-          workflowId: workflowId,
-        }),
-      });
 
-      if (response.ok) {
-        toast.success("Stage successfully created");
-        action?.();
-        closeModal();
-      }
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setMutating(false);
+    const response = await addStage({
+      name: values.name,
+      workflowId: workflowId,
+      handleError: (error) => {
+        toast.error(error);
+      },
+    });
+
+    if (response.success) {
+      toast.success(response.message);
+      refetchStages(workflowId);
     }
+
+    closeModal();
   };
 
   return (
