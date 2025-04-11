@@ -8,33 +8,37 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, weight, workflowId } = body;
 
-    const workflow = await db
+    const stage = await db
       .select()
       .from(stages)
       .where(eq(stages.name, name))
       .then((res) => res[0]); // Drizzle returns an array
 
-    if (workflow) {
+    if (stage) {
       return NextResponse.json(
-        { workflow: null, message: "Workflow with this name already exists" },
+        { success: false, message: "Stage with this name already exists" },
         { status: 409 }
       );
     }
 
-    const newStage = await db.insert(stages).values({
+    await db.insert(stages).values({
       name: name,
       weight: weight,
       workflowId: workflowId,
     });
 
     return NextResponse.json(
-      { stage: newStage, message: "Stage created successfully" },
+      { success: true, message: "Stage created successfully" },
       { status: 201 }
     );
   } catch (error) {
     console.error("Error creating workflow:", error);
     return NextResponse.json(
-      { message: "Internal Server Error", error: String(error) },
+      {
+        success: false,
+        message: "Internal Server Error",
+        error: String(error),
+      },
       { status: 500 }
     );
   }

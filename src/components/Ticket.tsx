@@ -3,20 +3,46 @@ import { FC } from "react";
 import { Ticket as TicketType } from "@/types/ticket";
 import React from "react";
 
-import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/sortable";
+import { cn } from "@/lib/utils";
 
 const Ticket: FC<{
   ticket: TicketType;
+  index?: number;
 }> = ({ ticket }) => {
-  const { attributes, setNodeRef, listeners, transform } = useDraggable({
+  const {
+    attributes,
+    setNodeRef,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: ticket.id,
-    data: { ...ticket },
+    data: { ...ticket, type: "ticket" },
   });
 
   const style = {
-    transform: CSS.Translate.toString(transform),
+    transition,
+    transform: CSS.Transform.toString(transform),
   };
+
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        style={style}
+        className="cursor-grab animate-fade-in-ticket"
+      >
+        <div className="w-full min-h-[100px]  bg-accent border-1 border-red-500 rounded-md">
+          <div className="rounded-md px-2 py-1"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -24,9 +50,12 @@ const Ticket: FC<{
       {...attributes}
       {...listeners}
       style={style}
-      className="cursor-grab transition duration-300 ease-out"
+      className={cn(
+        isDragging ? "cursor-grabbing" : "cursor-grab",
+        "animate-fade-in-ticket"
+      )}
     >
-      <div className="w-full min-h-[100px] animate-in bg-accent border-1 border-amber-500 rounded-md">
+      <div className="w-full min-h-[100px] bg-accent border-1 border-amber-500 rounded-md">
         <div className="rounded-md px-2 py-1">
           <p>{ticket?.name}</p>
         </div>

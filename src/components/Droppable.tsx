@@ -1,18 +1,20 @@
 "use client";
 import { cn } from "@/lib/utils";
+import { Stage } from "@/types/stage";
 import { useDroppable } from "@dnd-kit/core";
 
 function Droppable({
   children,
-  id,
+  stage,
   className,
 }: {
   children: React.ReactNode;
-  id: string;
+  stage: Stage;
   className?: string;
 }) {
   const { setNodeRef } = useDroppable({
-    id: id,
+    id: stage.id,
+    data: { ...stage, type: "stage" },
   });
 
   return (

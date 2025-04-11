@@ -10,48 +10,61 @@ import { CirclePlus } from "lucide-react";
 
 import { triggerModal } from "@/lib/triggerModal";
 import useGetTicketsQuery from "@/lib/queries/useGetTicketsQuery";
+import { cn } from "@/lib/utils";
+
+import { SortableContext } from "@dnd-kit/sortable";
 
 type StageProps = {
-  index: number;
+  dataTickets?: TicketType[];
+  index?: number;
+  setData: React.Dispatch<React.SetStateAction<Map<string, TicketType[]>>>;
   stage: StageType;
-  initialStagesMutation: (id: string, tickets: TicketType[]) => void;
 };
 
-const Stage: FC<StageProps> = ({ stage, initialStagesMutation }) => {
+const Stage: FC<StageProps> = ({ stage, setData, dataTickets }) => {
   const { data: tickets, isLoading } = useGetTicketsQuery(stage.id, {
     enabled: !!stage.id,
   });
 
   useEffect(() => {
     if (tickets?.length) {
-      initialStagesMutation(stage.id, tickets);
+      setData((prev: Map<string, TicketType[]>) => {
+        const newData = new Map(prev);
+        newData.set(stage.id, tickets);
+        return newData;
+      });
     }
   }, [isLoading, tickets, stage.id]);
 
   return (
-    <Droppable id={stage.id}>
-      <div className="flex-col items-center justify-start rounded-md h-full min-w-[300px]">
-        <div className="bg-accent rounded-md px-2 py-1 mb-3 flex items-center justify-between">
-          <p>{stage?.name}</p>
-          <Button
-            onClick={() =>
-              triggerModal({
-                title: "Create new ticket",
-                modalType: "ticket",
-                stageId: stage.id,
-              })
-            }
-            variant="ghost"
-            className="px-1 py-1 flex"
-          >
-            <CirclePlus className="h-3 w-3" />
-          </Button>
-        </div>
-        <div className="grid gap-3">
-          {stage?.tickets?.map((el: TicketType) => (
+    <Droppable
+      stage={stage}
+      className={cn(
+        "flex-col items-center justify-start bg-card rounded-md p-1.5 h-full min-w-[300px]"
+      )}
+    >
+      <div className="bg-accent rounded-md px-2 py-1 mb-3 flex items-center justify-between">
+        <p>{stage?.name}</p>
+        <Button
+          onClick={() =>
+            triggerModal({
+              title: "Create new ticket",
+              modalType: "ticket",
+              stageId: stage.id,
+            })
+          }
+          variant="ghost"
+          className="px-1 py-1 flex"
+        >
+          <CirclePlus className="h-3 w-3" />
+        </Button>
+      </div>
+      <div className="grid gap-2">
+        <SortableContext items={dataTickets?.map((el) => el.id) || []}>
+          {dataTickets?.map((el: TicketType) => (
             <Ticket ticket={el} key={el.id} />
           ))}
-        </div>
+        </SortableContext>
       </div>
     </Droppable>
   );

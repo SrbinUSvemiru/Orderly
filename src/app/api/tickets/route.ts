@@ -74,11 +74,14 @@ export async function PATCH(req: NextRequest) {
       .set({ ...updateData }) // Update only provided fields
       .where(eq(tickets.id, id));
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json(
+      { success: true, message: "Ticket updated succesfully!" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error updating ticket:", error);
     return NextResponse.json(
-      { user: null, message: "Internal Server Error" },
+      { message: "Internal Server Error", error: "Failed updating ticket" },
       { status: 500 }
     );
   }
