@@ -200,7 +200,7 @@ function Workflows({ params }: { params: Promise<{ workflowId: string }> }) {
       {isLoading ? (
         <DashboardSkeleton />
       ) : (
-        <div className="flex gap-x-4 h-full w-full">
+        <div className="flex gap-x-4 h-full w-fit">
           {stages?.map((el: StageType, index) => (
             <Stage
               setData={setData}

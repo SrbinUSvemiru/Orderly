@@ -24,6 +24,7 @@ const Ticket: FC<{
   });
 
   const style = {
+    cursor: isDragging ? "grabbing" : "grab",
     transition,
     transform: CSS.Transform.toString(transform),
   };
@@ -35,9 +36,9 @@ const Ticket: FC<{
         {...attributes}
         {...listeners}
         style={style}
-        className="cursor-grab animate-fade-in-ticket"
+        className={cn("animate-fade-in-ticket")}
       >
-        <div className="w-full min-h-[100px]  bg-accent border-1 border-red-500 rounded-md">
+        <div className="w-full min-h-[120px]  bg-muted border-1 border-red-500  rounded-md">
           <div className="rounded-md px-2 py-1"></div>
         </div>
       </div>
@@ -50,14 +51,11 @@ const Ticket: FC<{
       {...attributes}
       {...listeners}
       style={style}
-      className={cn(
-        isDragging ? "cursor-grabbing" : "cursor-grab",
-        "animate-fade-in-ticket"
-      )}
+      className={cn("animate-fade-in-ticket")}
     >
-      <div className="w-full min-h-[100px] bg-accent border-1 border-amber-500 rounded-md">
+      <div className="w-full min-h-[110px] dark:bg-neutral-800 bg-white border-1  dark:border-neutral-700 border-neutral-200 rounded-md">
         <div className="rounded-md px-2 py-1">
-          <p>{ticket?.name}</p>
+          <p className="text-[16px] font-[600]">{ticket?.name}</p>
         </div>
       </div>
     </div>

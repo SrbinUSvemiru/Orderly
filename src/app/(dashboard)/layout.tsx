@@ -11,7 +11,7 @@ async function Layout({ children }: { children: React.ReactNode }) {
         <Header />
         <Separator />
         <div className="overflow-hidden h-full flex">
-          <div className="flex-1 overflow-auto p-4 text-accent-foreground">
+          <div className="flex-1 w-full overflow-auto p-8 bg-slate-50 dark:bg-black ">
             {children}
           </div>
         </div>

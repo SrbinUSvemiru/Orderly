@@ -40,10 +40,10 @@ const Stage: FC<StageProps> = ({ stage, setData, dataTickets }) => {
     <Droppable
       stage={stage}
       className={cn(
-        "flex-col items-center justify-start bg-card rounded-md p-1.5 h-full min-w-[300px]"
+        "flex-col items-center justify-start bg-slate-100 dark:bg-neutral-900 rounded-md p-1.5 h-full min-w-[330px]"
       )}
     >
-      <div className="bg-accent rounded-md px-2 py-1 mb-3 flex items-center justify-between">
+      <div className="bg-white dark:bg-neutral-900 rounded-md px-2 py-1 mb-3 flex items-center justify-between">
         <p>{stage?.name}</p>
         <Button
           onClick={() =>
