@@ -42,12 +42,9 @@ export const Workflow: React.FC<WorkflowProps> = ({
 
   const nameValue = form.watch("name");
 
-  const handleError = useCallback(
-    (errorMessage = "User update failed...") => {
-      toast.error(errorMessage);
-    },
-    [toast]
-  );
+  const handleError = useCallback((errorMessage = "User update failed...") => {
+    toast.error(errorMessage);
+  }, []);
 
   const onSubmit = async (values: z.infer<typeof WorkflowSchema>) => {
     setMutating(true);

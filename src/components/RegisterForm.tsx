@@ -89,6 +89,7 @@ export const RegisterForm = () => {
         email: data?.email || "",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return (

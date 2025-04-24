@@ -73,6 +73,7 @@ function Ticket({
         name: ticket?.ticket?.name || "",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket, form.reset]);
 
   useLayoutEffect(() => {
@@ -101,7 +102,6 @@ function Ticket({
       ],
       action: async () => {},
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowId, workflows, ticket]);
 
   return (

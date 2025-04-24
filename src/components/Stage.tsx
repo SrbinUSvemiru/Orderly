@@ -46,6 +46,7 @@ const Stage: FC<StageProps> = ({ stage, setData, dataTickets }) => {
         return newData;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, tickets, stage?.id]);
 
   return (

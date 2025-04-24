@@ -30,8 +30,6 @@ const fetchFromServer = async (
 
     const result = await getResult(response);
 
-    console.log(response);
-
     if (!response.ok) {
       const errorMessage = result?.code
         ? "error." + result.code
