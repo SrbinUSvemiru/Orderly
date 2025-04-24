@@ -56,6 +56,7 @@ import { useUserStore } from "@/stores/userStore";
 import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
 import SidebarSkeleton from "./skeleton/sidebar";
 import React from "react";
+import { SERVER_URL } from "@/constants/server";
 
 interface SidebarItem {
   id: string;
@@ -334,20 +335,20 @@ export default function AppSidebar() {
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Tooltip
-                    delayDuration={1000}
-                    text={[
-                      user?.lastName
-                        ? `${user?.firstName} ${user?.lastName}`
-                        : user?.firstName || "",
-                      user?.email,
-                    ]}
-                  >
-                    <SidebarMenuButton className="h-full cursor-pointer">
-                      <User2 />
-                      {!user?.id ? (
-                        <Skeleton className="min-w-[90%] min-h-full" />
-                      ) : (
+                  <SidebarMenuButton className="h-full cursor-pointer">
+                    <User2 />
+                    {!user?.id ? (
+                      <Skeleton className="min-w-[90%] min-h-full" />
+                    ) : (
+                      <Tooltip
+                        delayDuration={1000}
+                        text={[
+                          user?.lastName
+                            ? `${user?.firstName} ${user?.lastName}`
+                            : user?.firstName || "",
+                          user?.email,
+                        ]}
+                      >
                         <div className="flex-col items-start justify-center overflow-hidden">
                           <p className="overflow-hidden truncate">
                             {user?.lastName
@@ -359,12 +360,12 @@ export default function AppSidebar() {
                             {user?.email}
                           </p>
                         </div>
-                      )}
-                      <ChevronUp className="ml-auto" />
-                    </SidebarMenuButton>
-                  </Tooltip>
+                      </Tooltip>
+                    )}
+                    <ChevronUp className="ml-auto" />
+                  </SidebarMenuButton>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" align="start" asChild>
+                <DropdownMenuContent side="top" asChild>
                   <DropdownMenuItem>
                     <SidebarMenuButton
                       variant="outline"
@@ -373,7 +374,7 @@ export default function AppSidebar() {
                         localStorage.clear();
                         signOut({
                           redirect: true,
-                          callbackUrl: `${window.location.origin}/sign-in`,
+                          callbackUrl: `${SERVER_URL}/sign-in`,
                         });
                       }}
                     >
