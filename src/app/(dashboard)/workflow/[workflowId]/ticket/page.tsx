@@ -88,7 +88,6 @@ function Ticket({ params }: { params: Promise<{ workflowId: string }> }) {
       ],
       action: async () => {},
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowId, workflows]);
 
   return (

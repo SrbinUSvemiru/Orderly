@@ -206,7 +206,6 @@ function Workflows({ workflowId }: { workflowId: string }) {
       ],
       action: async () => {},
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowId, workflows]);
 
   return (

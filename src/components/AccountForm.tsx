@@ -79,6 +79,7 @@ export const AccountForm = () => {
         firstName: user.firstName || "",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, form.reset]);
 
   useLayoutEffect(() => {
@@ -99,7 +100,6 @@ export const AccountForm = () => {
       ],
       action: async () => {},
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   if (!user?.id) {
