@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { cookies } from "next/headers";
 import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
@@ -29,6 +30,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -44,8 +48,9 @@ export default async function RootLayout({
                 disableTransitionOnChange
               >
                 <GlobalModal />
-                <SidebarProvider defaultOpen={true}>
+                <SidebarProvider defaultOpen={defaultOpen}>
                   <Toaster richColors />
+
                   <main className="w-full">{children}</main>
                 </SidebarProvider>
               </ThemeProvider>

@@ -1,6 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { User } from "../types/user";
+import { persist } from "zustand/middleware";
 
 interface UserStore {
   user: User;
@@ -24,11 +25,30 @@ const defaultInitState: User = {
   image: "",
 };
 
-export const useUserStore = create<UserStore>((set) => ({
-  user: defaultInitState,
-  setUser: (user) => set({ user }),
-  update: (updates: Partial<User>) =>
-    set((state) => ({
-      user: { ...state.user, ...updates },
-    })),
-}));
+export const useUserStore = create(
+  persist<UserStore>(
+    (set) => ({
+      user: defaultInitState,
+      setUser: (user) => set({ user }),
+      update: (updates: Partial<User>) =>
+        set((state) => ({
+          user: { ...state.user, ...updates },
+        })),
+    }),
+    {
+      name: "user-storage",
+      storage: {
+        getItem: (key) => {
+          const value = localStorage.getItem(key);
+          return value ? JSON.parse(value) : null;
+        },
+        setItem: (key, value) => {
+          localStorage.setItem(key, JSON.stringify(value));
+        },
+        removeItem: (key) => {
+          localStorage.removeItem(key);
+        },
+      },
+    }
+  )
+);

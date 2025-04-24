@@ -7,11 +7,12 @@ import { eq } from "drizzle-orm";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, stageId } = body;
+    const { name, stageId, ownerId } = body;
 
     await db.insert(tickets).values({
       name: name,
       stageId: stageId,
+      ownerId: ownerId,
     });
 
     return NextResponse.json(
@@ -31,18 +32,49 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+    const stageId = searchParams.get("stageId");
 
-    if (!id) {
+    if (!id && !stageId) {
       throw new Error("ID is required");
     }
-    const ticketsList = await db
-      .select()
-      .from(tickets)
-      .where(eq(tickets.stageId, id))
-      .then((res) => res); // Drizzle returns an array
 
-    if (ticketsList) {
-      return NextResponse.json([...ticketsList], { status: 200 });
+    if (stageId) {
+      const ticketsList = await db
+        .select()
+        .from(tickets)
+        .where(eq(tickets.stageId, stageId))
+        .then((res) => res); // Drizzle returns an array
+
+      const openCount = await db.$count(tickets, eq(tickets.stageId, stageId));
+
+      if (ticketsList) {
+        return NextResponse.json(
+          {
+            tickets: [...ticketsList],
+            count: openCount,
+            success: true,
+            message: "Ticket success",
+          },
+          { status: 200 }
+        );
+      }
+    }
+    if (id) {
+      const ticket = await db
+        .select()
+        .from(tickets)
+        .where(eq(tickets.id, id))
+        .then((res) => res); // Drizzle returns an array
+      if (ticket) {
+        return NextResponse.json(
+          {
+            ticket: { ...ticket[0] },
+            success: true,
+            message: "Ticket success",
+          },
+          { status: 200 }
+        );
+      }
     }
     throw new Error("Error geting tickets from database");
   } catch (error) {

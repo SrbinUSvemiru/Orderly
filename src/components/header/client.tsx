@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "../../ui/button";
+import { Button } from "../ui/button";
 import { ClientHeaderData } from "@/stores/headerStore";
 import { triggerModal } from "@/lib/triggerModal";
 

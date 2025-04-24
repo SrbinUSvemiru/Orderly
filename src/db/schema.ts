@@ -6,7 +6,7 @@ import {
   text,
   integer,
   varchar,
-  timestamp,
+  bigint,
 } from "drizzle-orm/pg-core";
 
 import { relations } from "drizzle-orm";
@@ -17,18 +17,17 @@ export const organizationTypeEnum = pgEnum("organization_type", [
 ]);
 
 const timestamps = {
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at")
+  createdAt: bigint("created_at", { mode: "number" }).default(Date.now()),
+  updatedAt: bigint("updated_at", { mode: "number" })
     .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-  deletedAt: timestamp("deleted_at"),
+    .default(Date.now())
+    .$onUpdate(() => Date.now()),
+  deletedAt: bigint("deleted_at", { mode: "number" }),
 };
 
 export const organizations = pgTable("organizations", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
-  owner: text().notNull(),
   type: organizationTypeEnum().notNull().default("client"),
   ...timestamps,
 });
@@ -100,8 +99,7 @@ export const stages = pgTable("stages", {
 export const labels = pgTable("labels", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull().default(""),
-  weight: integer().default(0),
-  active: boolean().notNull().default(true),
+  color: text().notNull().default(""),
   ...timestamps,
 });
 
@@ -122,6 +120,14 @@ export const tickets = pgTable("tickets", {
       onDelete: "cascade",
     }),
   weight: integer().default(0),
+  ownerId: uuid("owner_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  labelId: uuid("label_id").references(() => labels.id, {
+    onDelete: "set null",
+  }),
+  description: text().default(""),
+  dueDate: bigint("due_date", { mode: "number" }),
   active: boolean().notNull().default(true),
   ...timestamps,
 });
@@ -132,4 +138,8 @@ export const ticketRelations = relations(tickets, ({ one, many }) => ({
     references: [stages.id],
   }),
   labels: many(labels),
+  owner: one(users, {
+    fields: [tickets.ownerId],
+    references: [users.id],
+  }),
 }));

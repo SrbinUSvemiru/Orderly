@@ -4,21 +4,18 @@ import fetchFromServer from "../fetchFromServer";
 
 import { Ticket } from "@/types/ticket";
 
-const useGetTicketsQuery = (
-  stageId: string,
-  options?: { enabled: boolean }
-) => {
-  return useQuery<{ tickets: Ticket[]; count: number }>({
-    queryKey: QUERY_KEYS.Tickets(stageId),
+const useGetTicketsQuery = (id: string, options?: { enabled: boolean }) => {
+  return useQuery<{ ticket: Ticket }>({
+    queryKey: QUERY_KEYS.Ticket(id),
     queryFn: async () => {
       const response = await fetchFromServer(
-        `/api/tickets?stageId=${stageId}`,
+        `/api/tickets?id=${id}`,
         {
           method: "GET",
         }
         // should fail silently
       );
-      return response || ([] as Ticket[]);
+      return response || ({} as Ticket);
     },
     staleTime: Infinity,
     ...options,

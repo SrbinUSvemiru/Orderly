@@ -13,13 +13,9 @@ const useGetUserInfoQuery = (
       if (!userId) {
         return {};
       }
-      const response = await fetchFromServer(
-        `/api/users?id=${userId}`,
-        {
-          method: "GET",
-        }
-        // should fail silently
-      );
+      const response = await fetchFromServer(`/api/users?id=${userId}`, {
+        method: "GET",
+      });
       return response || ({} as User);
     },
     staleTime: Infinity,

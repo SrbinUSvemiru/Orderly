@@ -3,8 +3,8 @@ export type Ticket = {
   name: string;
   stageId: string;
   weight: number;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
+  createdAt: number;
+  updatedAt: number | null;
+  deletedAt: number | null;
   active: boolean;
 };

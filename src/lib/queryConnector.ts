@@ -34,6 +34,12 @@ export const refetchTickets = (stageId: string): void => {
   });
 };
 
+export const refetchTicketsCount = (stageId: string): void => {
+  queryConnector.queryClient.refetchQueries({
+    queryKey: QUERY_KEYS.TicketsCount(stageId),
+  });
+};
+
 export const refetchStages = (workflowId: string): void => {
   queryConnector.queryClient.refetchQueries({
     queryKey: QUERY_KEYS.Stages(workflowId),

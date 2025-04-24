@@ -2,27 +2,26 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../../constants/queryKeys";
 import fetchFromServer from "../fetchFromServer";
 
-import { Ticket } from "@/types/ticket";
-
-const useGetTicketsQuery = (
+const useGetTicketsCountQuery = (
   stageId: string,
   options?: { enabled: boolean }
 ) => {
-  return useQuery<{ tickets: Ticket[]; count: number }>({
-    queryKey: QUERY_KEYS.Tickets(stageId),
+  return useQuery<{ count: number }>({
+    queryKey: QUERY_KEYS.TicketsCount(stageId),
     queryFn: async () => {
       const response = await fetchFromServer(
-        `/api/tickets?stageId=${stageId}`,
+        `/api/tickets/count?id=${stageId}`,
         {
           method: "GET",
         }
         // should fail silently
       );
-      return response || ([] as Ticket[]);
+
+      return response || {};
     },
     staleTime: Infinity,
     ...options,
   });
 };
 
-export default useGetTicketsQuery;
+export default useGetTicketsCountQuery;

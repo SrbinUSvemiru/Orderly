@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/dialog";
 
 import { useModalStore } from "../../stores/modalStore";
-import { Workflow } from "./modalTypes/Workflow/workflow";
-import { Stage } from "./modalTypes/Stage/stage";
-import { Ticket } from "./modalTypes/Ticket/ticket";
-import { Client } from "./modalTypes/Client/inviteClient";
+import { Workflow } from "./Workflow/workflow";
+import { Stage } from "./Stage/stage";
+import { Ticket } from "./Ticket/ticket";
+import { Client } from "./Client/inviteClient";
 
 export function GlobalModal() {
   const { modalData, closeModal } = useModalStore();

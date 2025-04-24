@@ -1,6 +1,6 @@
 {
-  "id": "8978e66d-cd13-40e1-b195-7bd9415b35c1",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "74eb0084-14ab-4684-86d2-3793d50b29e7",
+  "prevId": "8978e66d-cd13-40e1-b195-7bd9415b35c1",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -34,14 +34,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -75,12 +75,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "owner": {
-          "name": "owner",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "type": {
           "name": "type",
           "type": "organization_type",
@@ -94,14 +88,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -161,14 +155,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -267,14 +261,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -406,14 +400,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -501,14 +495,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1744451994269
         },
         "deleted_at": {
           "name": "deleted_at",

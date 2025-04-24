@@ -4,12 +4,12 @@ export type User = {
   phone?: string;
   firstName: string;
   lastName?: string;
-  name: string;
+  name?: string;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
   active: boolean;
   organizationId: string;
-  image?: string;
+  image?: string | null;
   type: string;
 };

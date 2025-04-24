@@ -1,8 +1,9 @@
 "use client";
 
-import { Button } from "../../ui/button";
+import { Button } from "../ui/button";
 import { WorkflowHeaderData } from "@/stores/headerStore";
 import { triggerModal } from "@/lib/triggerModal";
+import { CirclePlus } from "lucide-react";
 
 interface WorkflowProps {
   headerData: WorkflowHeaderData;
@@ -12,6 +13,7 @@ export const Workflow: React.FC<WorkflowProps> = ({ headerData }) => {
   return (
     <>
       <Button
+        className="p-0"
         onClick={() =>
           triggerModal({
             title: "Add new stage",
@@ -22,7 +24,8 @@ export const Workflow: React.FC<WorkflowProps> = ({ headerData }) => {
           })
         }
       >
-        Add Stage
+        <span className="hidden md:block">Add Stage</span>
+        <CirclePlus className="h-3 w-3" />
       </Button>
     </>
   );

@@ -22,7 +22,6 @@ export default withAuth(
   }
 );
 
-// Apply middleware only to protected routes
 export const config = {
-  matcher: ["/"], // Protect all dashboard pages
+  matcher: ["/((?!_next|api|sign-in|favicon.ico).*)"],
 };

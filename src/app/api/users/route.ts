@@ -59,11 +59,14 @@ export async function GET(req: NextRequest) {
 
       if (!user) {
         return NextResponse.json(
-          { user: null, message: "User not found" },
+          { user: null, message: "User not found", success: false },
           { status: 404 }
         );
       }
-      return NextResponse.json({ ...user }, { status: 200 });
+      return NextResponse.json(
+        { user: user, success: true, message: "User success" },
+        { status: 200 }
+      );
     } else {
       const usersList = await db.query.users.findMany({
         columns: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "../../../ui/input";
+import { Input } from "../../ui/input";
 import { toast } from "sonner";
 import { useState } from "react";
 import { WorkflowSchema } from "./schema";
@@ -15,7 +15,7 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { Button } from "../../../ui/button";
+import { Button } from "../../ui/button";
 import { WorkflowModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
 import addWorkflow from "@/lib/actions/addWorkflow";

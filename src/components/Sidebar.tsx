@@ -2,17 +2,15 @@
 
 import {
   Workflow,
-  UserRoundPen,
-  Settings,
   ChevronUp,
   LogOut,
   User2,
-  ChevronRight,
   ChevronDown,
   CirclePlus,
   LucideIcon,
   Store,
   Building2,
+  Settings2,
 } from "lucide-react";
 
 import { useMemo, useState } from "react";
@@ -35,18 +33,14 @@ import {
 
 import { Tooltip } from "@/components/Tooltip";
 
-// import { toast } from "sonner";
-
-// import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-
 import { signOut } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -60,13 +54,14 @@ import Link from "next/link";
 import { triggerModal } from "@/lib/triggerModal";
 import { useUserStore } from "@/stores/userStore";
 import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
+import SidebarSkeleton from "./skeleton/sidebar";
+import React from "react";
 
-// TYPES
 interface SidebarItem {
   id: string;
   url?: string;
   title: string;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   type: SidebarItemType;
   actionButton?: {
     icon: LucideIcon;
@@ -82,7 +77,6 @@ interface SidebarItemProps {
 
 type SidebarItemType = "popover" | "collapsible" | "subitem" | "default";
 
-// Sta je tacno ovo?
 const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -91,103 +85,110 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <CollapsibleTrigger asChild>
-        <SidebarMenuButton asChild className="cursor-pointer">
-          {item.url ? (
-            <a href={item.url}>
-              <item.icon className="h-4 w-4 mr-1" />
-              <span>{item.title}</span>
-            </a>
-          ) : (
-            <p className="w-full flex">
-              <item.icon className="h-4 w-4 mr-1" />
-              <span>{item.title}</span>
-              {!isOpen ? (
-                <ChevronRight className="h-4 w-4 ml-auto" />
-              ) : (
-                <ChevronDown className="h-4 w-4 ml-auto" />
-              )}
-            </p>
-          )}
-        </SidebarMenuButton>
-      </CollapsibleTrigger>
-      <DropdownMenu>
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton asChild className="cursor-pointer">
+            {item.url ? (
+              <Link href={item.url}>
+                {item.icon && (
+                  <item.icon className="h-4 w-4 mr-1 text-accent-foreground/50" />
+                )}
+                <span>{item.title}</span>
+              </Link>
+            ) : (
+              <p className="w-full flex">
+                {item.icon && <item.icon className="h-4 w-4 mr-1" />}
+                <span>{item.title}</span>
+                {!isOpen ? (
+                  <ChevronDown className="h-4 w-4 ml-auto" />
+                ) : (
+                  <ChevronUp className="h-4 w-4 ml-auto" />
+                )}
+              </p>
+            )}
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+
         <CollapsibleContent>
           <SidebarMenuSub>
             {item.subitems?.map((subitem) => (
               <SidebarMenuSubItem key={subitem.title}>
                 <SidebarMenuButton asChild>
-                  <a href={subitem.url}>
+                  <Link href={subitem.url || ""}>
                     {subitem.icon && <subitem.icon />}
                     <span>{subitem.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuSubItem>
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>
-      </DropdownMenu>
+      </SidebarMenuItem>
     </Collapsible>
   );
 };
 
 const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <SidebarMenuButton className="cursor-pointer">
-          {item?.url ? (
-            <Link href={item?.url} className="gap-2">
-              <item.icon className="h-4 w-4 mr-1" />
-              <span>{item.title}</span>
-            </Link>
-          ) : (
+    <SidebarMenuItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton asChild className="cursor-pointer">
             <p className="w-full flex gap-2">
-              <item.icon className="h-4 w-4 mr-1" />
-              <span>{item.title}</span>
-              <ChevronRight className="h-4 w-4 ml-auto" />
+              {item.icon && (
+                <item.icon className="h-4 w-4 mr-1 text-accent-foreground/80" />
+              )}
+              <span>{item.title || ""}</span>
             </p>
-          )}
-        </SidebarMenuButton>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        side="right"
-        className="w-full py-2 px-1 bg-popover cursor-pointer rounded-md"
-      >
-        {item?.actionButton && (
-          <>
-            <DropdownMenuItem
-              onClick={() =>
-                item.actionButton?.onClick ? item.actionButton?.onClick() : {}
-              }
-              className="py-2 px-4 flex w-full items-center justify-center"
-            >
-              <span>{item?.actionButton?.label}</span>
-              <item.actionButton.icon className="h-4 w-4 ml-1" />
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </>
-        )}
-        {item.subitems?.map((el) =>
-          el?.url ? (
-            <Link href={el?.url} key={el.id}>
-              <DropdownMenuItem key={el.id} className="py-2 px-4">
-                <span>{el?.title}</span>
-              </DropdownMenuItem>
-            </Link>
-          ) : (
-            <DropdownMenuItem key={el.id} className="py-2 px-4">
-              <span>{el?.title}</span>
-            </DropdownMenuItem>
-          )
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent
+          align="start"
+          side="right"
+          asChild
+          className="w-[--radix-popper-anchor-width]"
+        >
+          <div>
+            {item?.actionButton && (
+              <div>
+                <DropdownMenuItem
+                  onClick={() =>
+                    item.actionButton?.onClick
+                      ? item.actionButton?.onClick()
+                      : {}
+                  }
+                  className="py-2 px-2 flex w-full items-center justify-center cursor-pointer"
+                >
+                  <span>{item?.actionButton?.label || ""}</span>
+                  <item.actionButton.icon className="h-4 w-4" />
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </div>
+            )}
+
+            <div className="flex flex-col overflow-y-auto max-h-[110px]">
+              {item.subitems?.map((el) =>
+                el?.url ? (
+                  <Link href={el?.url} key={el.id}>
+                    <DropdownMenuItem key={el.id} className="py-2 px-4">
+                      <span>{el?.title || ""}</span>
+                    </DropdownMenuItem>
+                  </Link>
+                ) : (
+                  <DropdownMenuItem key={el.id} className="py-2 px-4">
+                    <span>{el?.title || ""}</span>
+                  </DropdownMenuItem>
+                )
+              )}
+            </div>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarMenuItem>
   );
 };
 
-// Menu items.
 const getItems = ({
   workflows,
   organizationId,
@@ -242,14 +243,19 @@ const getItems = ({
     id: "4",
     title: "Settings",
     url: "",
-    icon: Settings,
+    icon: Settings2,
     type: "collapsible",
     subitems: [
+      {
+        id: "sub1",
+        title: "General",
+        url: "/settings/general",
+        type: "subitem",
+      },
       {
         id: "sub2",
         title: "Account",
         url: "/settings/account",
-        icon: UserRoundPen,
         type: "subitem",
       },
     ],
@@ -258,9 +264,9 @@ const getItems = ({
 
 export default function AppSidebar() {
   const user = useUserStore((state) => state.user);
+  const { state } = useSidebar();
 
   const { data: workflows } = useGetWorkflowsQuery();
-  const { state, toggleSidebar } = useSidebar();
 
   const sidebarItems = useMemo(
     () =>
@@ -275,101 +281,112 @@ export default function AppSidebar() {
   );
 
   return (
-    <Sidebar className="position-relative" collapsible="icon">
-      <SidebarTrigger className="absolute right-[-30px] top-[18px]" />
-      <SidebarHeader className="p-4 flex-row items-center justify-start h-16">
-        {/* <Button className="w-full" onClick={addOrg}>
+    <Sidebar
+      className="position-relative text-accent-foreground/80"
+      variant="inset"
+      collapsible="icon"
+    >
+      <SidebarTrigger className="absolute right-[-36px] top-[30px]" />
+
+      <>
+        <SidebarHeader className="p-3 flex-row items-center justify-start h-14">
+          {/* <Button className="w-full" onClick={addOrg}>
           Add org.
         </Button> */}
-      </SidebarHeader>
-      <Separator />
-      <SidebarContent>
-        <SidebarGroup className="py-4">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {sidebarItems?.map((item: SidebarItem) => (
-                <SidebarMenuItem
-                  key={item.title}
-                  onClick={() =>
-                    state === "collapsed" ? toggleSidebar() : null
-                  }
-                >
-                  {item?.type === "collapsible" && (
-                    <SidebarCollapsibleItem item={item} />
-                  )}
-                  {item?.type === "popover" && (
-                    <SidebarPopoverItem item={item} />
-                  )}
-                  {item?.type === "default" && (
-                    <SidebarMenuButton className="cursor-pointer">
-                      <Link
-                        href={item.url || ""}
-                        className=" flex w-full gap-2"
-                      >
-                        <item.icon className="h-4 w-4 mr-1" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  )}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="h-full cursor-pointer">
-                  <User2 />
-                  {!user ? (
-                    <Skeleton className="min-w-[90%] min-h-full" />
-                  ) : (
-                    <div className="flex-col items-start justify-center overflow-hidden">
-                      <Tooltip text={`${user?.name}` || ""}>
-                        <p className="overflow-hidden truncate">
-                          {user?.lastName
-                            ? `${user?.firstName} ${user?.lastName}`
-                            : user?.firstName}
-                        </p>
-                      </Tooltip>
-                      <Tooltip text={`${user?.email}` || ""}>
-                        <p className="overflow-hidden truncate">
-                          {user?.email}
-                        </p>
-                      </Tooltip>
-                    </div>
-                  )}
-                  <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                side="top"
-                className="w-fit mb-[4px] p-2 rounded-md bg-popover cursor-pointer"
-              >
-                <DropdownMenuItem>
-                  <SidebarMenuButton
-                    variant="outline"
-                    className="cursor-pointer"
-                    onClick={() =>
-                      signOut({
-                        redirect: true,
-                        callbackUrl: `${window.location.origin}/sign-in`,
-                      })
-                    }
+        </SidebarHeader>
+
+        <SidebarContent>
+          <SidebarGroup className="py-4">
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {!sidebarItems?.length ? (
+                  <SidebarSkeleton />
+                ) : (
+                  sidebarItems?.map((item: SidebarItem) => (
+                    <React.Fragment key={item.id}>
+                      {item?.type === "collapsible" && state === "expanded" && (
+                        <SidebarCollapsibleItem item={item} />
+                      )}
+                      {item?.type === "popover" ||
+                      (state === "collapsed" &&
+                        item?.type === "collapsible") ? (
+                        <SidebarPopoverItem item={item} />
+                      ) : null}
+                      {item?.type === "default" && (
+                        <Link href={item.url || ""}>
+                          <SidebarMenuButton className="cursor-pointer flex w-full gap-2">
+                            {item.icon && (
+                              <item.icon className="h-4 w-4 mr-1" />
+                            )}
+                            <span>{item.title}</span>
+                          </SidebarMenuButton>
+                        </Link>
+                      )}
+                    </React.Fragment>
+                  ))
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Tooltip
+                    delayDuration={1000}
+                    text={[
+                      user?.lastName
+                        ? `${user?.firstName} ${user?.lastName}`
+                        : user?.firstName || "",
+                      user?.email,
+                    ]}
                   >
-                    <LogOut />
-                    <span> Sign out</span>
-                  </SidebarMenuButton>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+                    <SidebarMenuButton className="h-full cursor-pointer">
+                      <User2 />
+                      {!user?.id ? (
+                        <Skeleton className="min-w-[90%] min-h-full" />
+                      ) : (
+                        <div className="flex-col items-start justify-center overflow-hidden">
+                          <p className="overflow-hidden truncate">
+                            {user?.lastName
+                              ? `${user?.firstName} ${user?.lastName}`
+                              : user?.firstName || ""}
+                          </p>
+
+                          <p className="overflow-hidden truncate">
+                            {user?.email}
+                          </p>
+                        </div>
+                      )}
+                      <ChevronUp className="ml-auto" />
+                    </SidebarMenuButton>
+                  </Tooltip>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="top" asChild>
+                  <DropdownMenuItem>
+                    <SidebarMenuButton
+                      variant="outline"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        localStorage.clear();
+                        signOut({
+                          redirect: true,
+                          callbackUrl: `${window.location.origin}/sign-in`,
+                        });
+                      }}
+                    >
+                      <LogOut />
+                      <span> Sign out</span>
+                    </SidebarMenuButton>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </>
     </Sidebar>
   );
 }

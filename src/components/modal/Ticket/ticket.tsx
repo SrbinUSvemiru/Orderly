@@ -1,9 +1,9 @@
 "use client";
 
-import { Input } from "../../../ui/input";
+import { Input } from "../../ui/input";
 import { toast } from "sonner";
 import { useState } from "react";
-import { InviteClient } from "./schema";
+import { TicketSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -15,64 +15,46 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { Button } from "../../../ui/button";
-import { ClientModalData } from "@/stores/modalStore";
+import { Button } from "../../ui/button";
+import { TicketModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
-import { useUserStore } from "@/stores/userStore";
+import addTicket from "@/lib/actions/addTicket";
+import { refetchTickets, refetchTicketsCount } from "@/lib/queryConnector";
 
-interface ClientProps {
-  modalData: ClientModalData;
+interface StageProps {
+  modalData: TicketModalData;
   closeModal: () => void;
 }
 
-export const Client: React.FC<ClientProps> = ({ closeModal }) => {
+export const Ticket: React.FC<StageProps> = ({
+  closeModal,
+  modalData: { stageId },
+}) => {
   const [isMutating, setMutating] = useState(false);
 
-  const user = useUserStore((state) => state.user);
-
-  console.log(user);
-
-  const form = useForm<z.infer<typeof InviteClient>>({
-    resolver: zodResolver(InviteClient),
+  const form = useForm<z.infer<typeof TicketSchema>>({
+    resolver: zodResolver(TicketSchema),
     defaultValues: {
-      email: "",
+      name: "",
     },
   });
 
-  const nameValue = form.watch("email");
+  const nameValue = form.watch("name");
 
-  const onSubmit = async (values: z.infer<typeof InviteClient>) => {
+  const onSubmit = async (values: z.infer<typeof TicketSchema>) => {
     setMutating(true);
-    try {
-      if (!values?.email) {
-        throw new Error("No email provided");
-      }
 
-      const response = await fetch(`/api/invite-client`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: values.email,
-          organizationId: user.organizationId,
-        }),
-      });
+    const response = await addTicket({
+      name: values.name,
+      stageId: stageId,
+      handleError: () => toast.error("Something went wrong"),
+    });
 
-      const res = await response.json();
-
-      if (res.error) {
-        toast.error(res.error);
-      } else {
-        toast.success(res.message);
-      }
-
+    if (response.success) {
+      toast.success("Ticket successfully created");
+      refetchTickets(stageId);
+      refetchTicketsCount(stageId);
       closeModal();
-    } catch (error) {
-      console.error("Error sending email:", error);
-      toast.error("Something went wrong");
-    } finally {
-      setMutating(false);
     }
   };
 
@@ -84,12 +66,12 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
       >
         <FormField
           control={form.control}
-          name="email"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="example@mail.com" {...field} />
+                <Input placeholder="Example name" {...field} />
               </FormControl>
               <FormMessage className="text-left" />
             </FormItem>
@@ -102,7 +84,7 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
             disabled={isMutating || !nameValue}
           >
             {isMutating && <Loader2 className="animate-spin" />}
-            Invite
+            Create
           </Button>
           <Button
             disabled={isMutating}

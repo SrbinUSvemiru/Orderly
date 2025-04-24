@@ -1,9 +1,9 @@
 "use client";
 
-import { Input } from "../../../ui/input";
+import { Input } from "../../ui/input";
 import { toast } from "sonner";
 import { useState } from "react";
-import { TicketSchema } from "./schema";
+import { StageSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -15,25 +15,25 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { Button } from "../../../ui/button";
-import { TicketModalData } from "@/stores/modalStore";
+import { Button } from "../../ui/button";
+import { StageModalData } from "@/stores/modalStore";
 import { Loader2 } from "lucide-react";
-import addTicket from "@/lib/actions/addTicket";
-import { refetchTickets } from "@/lib/queryConnector";
+import addStage from "@/lib/actions/addStage";
+import { refetchStages } from "@/lib/queryConnector";
 
 interface StageProps {
-  modalData: TicketModalData;
+  modalData: StageModalData;
   closeModal: () => void;
 }
 
-export const Ticket: React.FC<StageProps> = ({
+export const Stage: React.FC<StageProps> = ({
   closeModal,
-  modalData: { stageId },
+  modalData: { workflowId },
 }) => {
   const [isMutating, setMutating] = useState(false);
 
-  const form = useForm<z.infer<typeof TicketSchema>>({
-    resolver: zodResolver(TicketSchema),
+  const form = useForm<z.infer<typeof StageSchema>>({
+    resolver: zodResolver(StageSchema),
     defaultValues: {
       name: "",
     },
@@ -41,20 +41,23 @@ export const Ticket: React.FC<StageProps> = ({
 
   const nameValue = form.watch("name");
 
-  const onSubmit = async (values: z.infer<typeof TicketSchema>) => {
+  const onSubmit = async (values: z.infer<typeof StageSchema>) => {
     setMutating(true);
 
-    const response = await addTicket({
+    const response = await addStage({
       name: values.name,
-      stageId: stageId,
-      handleError: () => toast.error("Something went wrong"),
+      workflowId: workflowId,
+      handleError: (error) => {
+        toast.error(error);
+      },
     });
 
     if (response.success) {
-      toast.success("Ticket successfully created");
-      refetchTickets(stageId);
-      closeModal();
+      toast.success(response.message);
+      refetchStages(workflowId);
     }
+
+    closeModal();
   };
 
   return (
