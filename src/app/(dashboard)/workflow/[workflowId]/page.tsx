@@ -6,20 +6,18 @@ import {
 import prefetchStagesQuery from "@/lib/queries/prefetchStagesQuery";
 import WorkflowsPage from "./WorkflowsPage";
 
-async function Workflows({
-  params,
-}: {
-  params: { workflowId: string };
-}): Promise<JSX.Element> {
-  const queryClient = new QueryClient();
-  const { workflowId } = params;
+type Params = Promise<{ workflowId: string }>;
 
-  await prefetchStagesQuery(queryClient, workflowId);
+async function Workflows(props: { params: Params }) {
+  const queryClient = new QueryClient();
+  const params = await props.params;
+
+  await prefetchStagesQuery(queryClient, params.workflowId);
 
   const dehydratedState = dehydrate(queryClient);
   return (
     <HydrationBoundary state={dehydratedState}>
-      <WorkflowsPage workflowId={workflowId} />
+      <WorkflowsPage workflowId={params.workflowId} />
     </HydrationBoundary>
   );
 }

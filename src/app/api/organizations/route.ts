@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
 
       const newOrganization = await db.insert(organizations).values({
         name: name,
-        owner: session.user.id,
       });
 
       return NextResponse.json(
