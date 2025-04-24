@@ -364,7 +364,7 @@ export default function AppSidebar() {
                     </SidebarMenuButton>
                   </Tooltip>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" asChild>
+                <DropdownMenuContent side="top" align="start" asChild>
                   <DropdownMenuItem>
                     <SidebarMenuButton
                       variant="outline"

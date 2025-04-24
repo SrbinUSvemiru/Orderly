@@ -6,13 +6,14 @@ import {
 import prefetchStagesQuery from "@/lib/queries/prefetchStagesQuery";
 import WorkflowsPage from "./WorkflowsPage";
 
-type PageProps = {
+async function Workflows({
+  params,
+}: {
   params: { workflowId: string };
-};
-
-async function Workflows({ params }: PageProps) {
+}): Promise<JSX.Element> {
   const queryClient = new QueryClient();
-  const { workflowId } = await params;
+  const { workflowId } = params;
+
   await prefetchStagesQuery(queryClient, workflowId);
 
   const dehydratedState = dehydrate(queryClient);
