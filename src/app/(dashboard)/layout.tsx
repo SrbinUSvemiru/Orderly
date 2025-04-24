@@ -1,22 +1,37 @@
 import { Separator } from "@/components/ui/separator";
 import AppSidebar from "@/components/Sidebar";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import prefetchWorkflowsQuery from "@/lib/queries/prefetchWorkflowsQuery";
+
+import GlobalHeader from "@/components/header/GlobalHeader";
 
 async function Layout({ children }: { children: React.ReactNode }) {
+  const queryClient = new QueryClient();
+
+  await prefetchWorkflowsQuery(queryClient);
+
+  const dehydratedState = dehydrate(queryClient);
+
   return (
-    <div className="min-h-screen flex">
-      <AppSidebar />
-      <div className="flex flex-1 flex-col min-h-screen">
-        <header className="flex items-center justify-between container px-6 py-4 h-[64px]">
-          Orderly
-        </header>
-        <Separator />
-        <div className="overflow-auto h-full">
-          <div className="flex-1 container p-4 text-accent-foreground">
+    <HydrationBoundary state={dehydratedState}>
+      <div className="min-h-screen flex overflow-hidden">
+        <AppSidebar />
+
+        <div className="flex flex-1 flex-col shadow-lg rounded-tl-2xl  mt-4 overflow-hidden">
+          <GlobalHeader />
+
+          <Separator />
+
+          <div className="flex-1 w-full overflow-scroll px-8 py-5 bg-white dark:bg-zinc-900 ">
             {children}
           </div>
         </div>
       </div>
-    </div>
+    </HydrationBoundary>
   );
 }
 

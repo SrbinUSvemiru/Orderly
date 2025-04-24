@@ -1,10 +1,14 @@
 import { authConfig } from "@/db/auth";
 import { getServerSession } from "next-auth";
 
-async function Home() {
+async function Workflows() {
   const session = await getServerSession(authConfig);
-  console.log(session);
-  return <p>{session?.user?.email}</p>;
+
+  return (
+    <>
+      <p>Welcome back {session?.user?.name}</p>
+    </>
+  );
 }
 
-export default Home;
+export default Workflows;

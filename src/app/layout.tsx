@@ -2,8 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { cookies } from "next/headers";
 import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { GlobalModal } from "@/components/modal/GlobalModal";
+import { ZustandProvider } from "@/components/providers/ZustandProvider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,17 +30,33 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <SidebarProvider>
-            <Toaster richColors />
-            <main className="w-full">{children}</main>
-          </SidebarProvider>
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <ZustandProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <GlobalModal />
+                <SidebarProvider defaultOpen={defaultOpen}>
+                  <Toaster richColors />
+
+                  <main className="w-full">{children}</main>
+                </SidebarProvider>
+              </ThemeProvider>
+            </ZustandProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

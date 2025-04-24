@@ -1,14 +1,13 @@
-import { JWT } from "next-auth/jwt";
-
-import { Session, NextAuthOptions, User } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "./index";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { users } from "./schema";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { LoginSchema } from "@/types/login-schema";
+import { User } from "@/types/user";
 
 export const authConfig: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -62,24 +61,44 @@ export const authConfig: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user: User }) {
+    async jwt({ token, user }) {
       if (user) {
+        const customUser = user as User;
         token.user = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
+          id: customUser.id,
+          name: customUser.name,
+          email: customUser.email,
+          image: customUser.image,
+          firstName: customUser.firstName,
+          lastName: customUser.lastName,
+          createdAt: customUser.createdAt,
+          updatedAt: customUser.updatedAt,
+          deletedAt: customUser.deletedAt,
+          active: customUser.active,
+          organizationId: customUser.organizationId,
+          phone: customUser.phone,
+          type: customUser.type,
         };
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       if (token.user) {
+        const customUser = token.user as User;
         session.user = {
-          id: (token.user as User).id,
-          name: (token.user as User).name,
-          email: (token.user as User).email,
-          image: (token.user as User).image,
+          id: customUser.id,
+          name: customUser.name,
+          email: customUser.email,
+          image: customUser.image,
+          firstName: customUser.firstName,
+          lastName: customUser.lastName,
+          createdAt: customUser.createdAt,
+          updatedAt: customUser.updatedAt,
+          deletedAt: customUser.deletedAt,
+          active: customUser.active,
+          organizationId: customUser.organizationId,
+          phone: customUser.phone,
+          type: customUser.type,
         };
       }
       return session;

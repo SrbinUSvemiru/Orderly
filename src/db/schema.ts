@@ -6,26 +6,29 @@ import {
   text,
   integer,
   varchar,
-  timestamp,
+  bigint,
 } from "drizzle-orm/pg-core";
 
 import { relations } from "drizzle-orm";
 
-export const UserTypeEnum = pgEnum("type", ["client", "employee"]);
+export const organizationTypeEnum = pgEnum("organization_type", [
+  "enterprise",
+  "client",
+]);
 
 const timestamps = {
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at")
+  createdAt: bigint("created_at", { mode: "number" }).default(Date.now()),
+  updatedAt: bigint("updated_at", { mode: "number" })
     .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-  deletedAt: timestamp("deleted_at"),
+    .default(Date.now())
+    .$onUpdate(() => Date.now()),
+  deletedAt: bigint("deleted_at", { mode: "number" }),
 };
 
 export const organizations = pgTable("organizations", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
-  owner: text().notNull(),
+  type: organizationTypeEnum().notNull().default("client"),
   ...timestamps,
 });
 
@@ -38,15 +41,14 @@ export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
   email: varchar().unique().notNull(),
   phone: text().unique(),
-  firstName: text().default(""),
-  lastName: text().default(""),
+  firstName: text("first_name").default(""),
+  lastName: text("last_name").default(""),
   name: text().default(""),
   password: varchar().notNull(),
   organizationId: uuid("organization_id").references(() => organizations.id, {
     onDelete: "cascade",
   }),
-  type: UserTypeEnum().notNull().default("client"),
-  image: text(),
+  image: text().default(""),
   active: boolean().notNull().default(true),
   ...timestamps,
 });
@@ -94,6 +96,13 @@ export const stages = pgTable("stages", {
   ...timestamps,
 });
 
+export const labels = pgTable("labels", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: text().notNull().default(""),
+  color: text().notNull().default(""),
+  ...timestamps,
+});
+
 export const stageRelations = relations(stages, ({ one, many }) => ({
   workflow: one(workflows, {
     fields: [stages.workflowId],
@@ -111,13 +120,26 @@ export const tickets = pgTable("tickets", {
       onDelete: "cascade",
     }),
   weight: integer().default(0),
+  ownerId: uuid("owner_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  labelId: uuid("label_id").references(() => labels.id, {
+    onDelete: "set null",
+  }),
+  description: text().default(""),
+  dueDate: bigint("due_date", { mode: "number" }),
   active: boolean().notNull().default(true),
   ...timestamps,
 });
 
-export const ticketRelations = relations(tickets, ({ one }) => ({
+export const ticketRelations = relations(tickets, ({ one, many }) => ({
   stage: one(stages, {
     fields: [tickets.stageId],
     references: [stages.id],
+  }),
+  labels: many(labels),
+  owner: one(users, {
+    fields: [tickets.ownerId],
+    references: [users.id],
   }),
 }));
