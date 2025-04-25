@@ -22,7 +22,7 @@ function GlobalHeader() {
 
   return (
     <header className="flex dark:bg-zinc-900 bg-white justify-end md:rounded-tl-2xl  items-center  space-x-4 px-6  py-1 min-h-[54px]">
-      <SidebarTrigger className="" />
+      <SidebarTrigger className="mr-auto" />
       {breadcrumbArrayLength && (
         <Breadcrumb className="mr-auto">
           <BreadcrumbList>
