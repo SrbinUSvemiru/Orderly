@@ -10,6 +10,7 @@ import { GlobalModal } from "@/components/modal/GlobalModal";
 import { ZustandProvider } from "@/components/providers/ZustandProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <SpeedInsights />
         <Analytics />
         <QueryProvider>
           <AuthProvider>
