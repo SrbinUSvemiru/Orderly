@@ -415,7 +415,8 @@ export default function AppSidebar() {
                       variant="outline"
                       className="cursor-pointer"
                       onClick={() => {
-                        localStorage.clear();
+                        localStorage.removeItem("user-storage");
+                        localStorage.removeItem("header-storage");
                         signOut({
                           redirect: true,
                           callbackUrl: `${SERVER_URL}/sign-in`,
