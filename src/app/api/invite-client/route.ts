@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import sgMail from "@sendgrid/mail";
 import { generateToken } from "@/lib/encryption";
+import { SERVER_URL } from "@/constants/server";
 
 const apiKey = process.env.SENDGRID_API_KEY || "";
 const templateId = process.env.SENDGRID_REGISTER_TEMPLATE_ID || "";
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
       from: "srbinusvemiru@gmail.com",
       templateId: templateId,
       dynamicTemplateData: {
-        registration_link: `${process.env.URL}/sign-up?token=${token}`,
+        registration_link: `${SERVER_URL}/sign-up?token=${token}`,
       },
     };
 
