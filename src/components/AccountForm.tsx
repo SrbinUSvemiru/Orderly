@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import {
   Form,
   FormMessage,
-  FormItem,
   FormLabel,
   FormControl,
   FormField,
@@ -23,6 +22,7 @@ import { useUserStore } from "@/stores/userStore";
 import updateUser from "../lib/actions/updateUser";
 import AccountFormSkeleton from "./skeleton/accountForm";
 import { triggerHeader } from "@/lib/triggerHeader";
+import { FormGrid, FormGridItem, GridItem } from "./Grid/Grid";
 
 export const AccountForm = () => {
   const [isMutating, setisMutating] = useState(false);
@@ -100,7 +100,7 @@ export const AccountForm = () => {
       ],
       action: async () => {},
     });
-  }, [user?.id]);
+  }, []);
 
   if (!user?.id) {
     return <AccountFormSkeleton />;
@@ -110,102 +110,104 @@ export const AccountForm = () => {
 
   return (
     <Form {...form}>
-      <form
+      <FormGrid
+        columns={12}
         onSubmit={form.handleSubmit(onSubmit, (errors) => {
           console.log("❌ Validation errors:", errors);
         })}
-        className="space-y-6 text-center"
+        className="text-center"
+        gap={4}
       >
         <FormField
           control={form.control}
           name="firstName"
           render={({ field }) => (
-            <FormItem>
+            <FormGridItem sm={6} md={12} lg={4}>
               <FormLabel>First name</FormLabel>
               <FormControl>
                 <Input placeholder="John" {...field} />
               </FormControl>
               <FormMessage className="text-left" />
-            </FormItem>
+            </FormGridItem>
           )}
         />
         <FormField
           control={form.control}
           name="lastName"
           render={({ field }) => (
-            <FormItem>
+            <FormGridItem sm={6} md={12} lg={4}>
               <FormLabel>Last name</FormLabel>
               <FormControl>
                 <Input placeholder="Smith" {...field} />
               </FormControl>
-            </FormItem>
+            </FormGridItem>
           )}
         />
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
+            <FormGridItem sm={6} md={12} lg={4}>
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input disabled placeholder="example@mail.com" {...field} />
               </FormControl>
-
               <FormMessage className="text-left" />
-            </FormItem>
+            </FormGridItem>
           )}
         />
         <FormField
           control={form.control}
           name="phone"
           render={({ field }) => (
-            <FormItem>
+            <FormGridItem sm={6} md={12} lg={4}>
               <FormLabel>Phone</FormLabel>
               <FormControl>
                 <Input placeholder="+12345678" {...field} />
               </FormControl>
-
               <FormMessage className="text-left" />
-            </FormItem>
+            </FormGridItem>
           )}
         />
         {/* <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormGridItem sm={6} >
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input placeholder="password" {...field} />
               </FormControl>
 
               <FormMessage className="text-left" />
-            </FormItem>
+            </FormGridItem>
           )}
         /> */}
         {/* <FormField
           control={form.control}
           name="confirmPassword"
           render={({ field }) => (
-            <FormItem>
+            <FormGridItem sm={6} >
               <FormLabel>Confirm password</FormLabel>
               <FormControl>
                 <Input placeholder="Re-enter password" {...field} />
               </FormControl>
 
               <FormMessage className="text-left" />
-            </FormItem>
+            </FormGridItem>
           )}
         /> */}
-        <Button
-          type="submit"
-          disabled={isMutating}
-          className="w-full bg-green-700 cursor-pointer"
-        >
-          {isMutating && <Loader2 className="animate-spin" />}
-          Save
-        </Button>
-      </form>
+        <GridItem sm={12}>
+          <Button
+            type="submit"
+            disabled={isMutating}
+            className=" mt-9 bg-green-700 cursor-pointer   hover:bg-green-800"
+          >
+            {isMutating && <Loader2 className="animate-spin" />}
+            Save
+          </Button>
+        </GridItem>
+      </FormGrid>
     </Form>
   );
 };

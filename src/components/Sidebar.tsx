@@ -23,7 +23,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarHeader,
-  SidebarTrigger,
   SidebarFooter,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -57,6 +56,7 @@ import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
 import SidebarSkeleton from "./skeleton/sidebar";
 import React from "react";
 import { SERVER_URL } from "@/constants/server";
+import { cn } from "@/lib/utils";
 
 interface SidebarItem {
   id: string;
@@ -74,11 +74,17 @@ interface SidebarItem {
 
 interface SidebarItemProps {
   item: SidebarItem;
+  state: string;
+  onClick: () => void;
 }
 
 type SidebarItemType = "popover" | "collapsible" | "subitem" | "default";
 
-const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
+const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({
+  item,
+  state,
+  onClick,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Collapsible
@@ -90,21 +96,36 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
         <CollapsibleTrigger asChild>
           <SidebarMenuButton asChild className="cursor-pointer">
             {item.url ? (
-              <Link href={item.url}>
+              <Link href={item.url} onClick={() => onClick()}>
                 {item.icon && (
-                  <item.icon className="h-4 w-4 mr-1 text-accent-foreground/50" />
+                  <item.icon
+                    className={cn(
+                      "!w-3.5 !h-3.5 transition-all",
+                      isOpen && "!w-0 !h-0",
+                      state === "collapsed" && "!w-4 !h-4"
+                    )}
+                  />
                 )}
-                <span>{item.title}</span>
+                <span className="text-[16px]">{item.title}</span>
               </Link>
             ) : (
-              <p className="w-full flex">
-                {item.icon && <item.icon className="h-4 w-4 mr-1" />}
-                <span>{item.title}</span>
-                {!isOpen ? (
-                  <ChevronDown className="h-4 w-4 ml-auto" />
-                ) : (
-                  <ChevronUp className="h-4 w-4 ml-auto" />
+              <p className="w-full flex text-[16px]">
+                {item.icon && (
+                  <item.icon
+                    className={cn(
+                      "!w-3.5 !h-3.5 transition-all",
+                      isOpen && "!w-0 !h-0",
+                      state === "collapsed" && "!w-4 !h-4"
+                    )}
+                  />
                 )}
+                <span>{item.title}</span>
+                <ChevronDown
+                  className={cn(
+                    "ml-auto transition-transform",
+                    isOpen ? "rotate-180" : ""
+                  )}
+                />
               </p>
             )}
           </SidebarMenuButton>
@@ -115,9 +136,9 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
             {item.subitems?.map((subitem) => (
               <SidebarMenuSubItem key={subitem.title}>
                 <SidebarMenuButton asChild>
-                  <Link href={subitem.url || ""}>
+                  <Link href={subitem.url || ""} onClick={() => onClick()}>
                     {subitem.icon && <subitem.icon />}
-                    <span>{subitem.title}</span>
+                    <span className="text-[16px]">{subitem.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuSubItem>
@@ -129,7 +150,11 @@ const SidebarCollapsibleItem: React.FC<SidebarItemProps> = ({ item }) => {
   );
 };
 
-const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
+const SidebarPopoverItem: React.FC<SidebarItemProps> = ({
+  item,
+  state,
+  onClick,
+}) => {
   return (
     <SidebarMenuItem>
       <DropdownMenu>
@@ -137,9 +162,14 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
           <SidebarMenuButton asChild className="cursor-pointer">
             <p className="w-full flex gap-2">
               {item.icon && (
-                <item.icon className="h-4 w-4 mr-1 text-accent-foreground/80" />
+                <item.icon
+                  className={cn(
+                    "!w-3.5 !h-3.5 transition-transform",
+                    state === "collapsed" ? "!w-4 !h-4" : ""
+                  )}
+                />
               )}
-              <span>{item.title || ""}</span>
+              <span className="text-[16px]">{item.title || ""}</span>
             </p>
           </SidebarMenuButton>
         </DropdownMenuTrigger>
@@ -159,7 +189,7 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
                       ? item.actionButton?.onClick()
                       : {}
                   }
-                  className="py-2 px-2 flex w-full items-center justify-center cursor-pointer"
+                  className="py-2 px-2 flex w-full bg-black/5 dark:bg-white/5 items-center justify-center cursor-pointer"
                 >
                   <span>{item?.actionButton?.label || ""}</span>
                   <item.actionButton.icon className="h-4 w-4" />
@@ -171,14 +201,14 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({ item }) => {
             <div className="flex flex-col overflow-y-auto max-h-[110px]">
               {item.subitems?.map((el) =>
                 el?.url ? (
-                  <Link href={el?.url} key={el.id}>
+                  <Link href={el?.url} key={el.id} onClick={() => onClick()}>
                     <DropdownMenuItem key={el.id} className="py-2 px-4">
-                      <span>{el?.title || ""}</span>
+                      <span className="text-[16px]">{el?.title || ""}</span>
                     </DropdownMenuItem>
                   </Link>
                 ) : (
                   <DropdownMenuItem key={el.id} className="py-2 px-4">
-                    <span>{el?.title || ""}</span>
+                    <span className="text-[16px]">{el?.title || ""}</span>
                   </DropdownMenuItem>
                 )
               )}
@@ -265,7 +295,7 @@ const getItems = ({
 
 export default function AppSidebar() {
   const user = useUserStore((state) => state.user);
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
 
   const { data: workflows } = useGetWorkflowsQuery();
 
@@ -287,8 +317,6 @@ export default function AppSidebar() {
       variant="inset"
       collapsible="icon"
     >
-      <SidebarTrigger className="absolute right-[-36px] top-[30px]" />
-
       <>
         <SidebarHeader className="p-3 flex-row items-center justify-start h-14">
           {/* <Button className="w-full" onClick={addOrg}>
@@ -306,20 +334,36 @@ export default function AppSidebar() {
                   sidebarItems?.map((item: SidebarItem) => (
                     <React.Fragment key={item.id}>
                       {item?.type === "collapsible" && state === "expanded" && (
-                        <SidebarCollapsibleItem item={item} />
+                        <SidebarCollapsibleItem
+                          item={item}
+                          onClick={() => setOpenMobile(false)}
+                          state={state}
+                        />
                       )}
                       {item?.type === "popover" ||
                       (state === "collapsed" &&
                         item?.type === "collapsible") ? (
-                        <SidebarPopoverItem item={item} />
+                        <SidebarPopoverItem
+                          item={item}
+                          onClick={() => setOpenMobile(false)}
+                          state={state}
+                        />
                       ) : null}
                       {item?.type === "default" && (
-                        <Link href={item.url || ""}>
+                        <Link
+                          href={item.url || ""}
+                          onClick={() => setOpenMobile(false)}
+                        >
                           <SidebarMenuButton className="cursor-pointer flex w-full gap-2">
                             {item.icon && (
-                              <item.icon className="h-4 w-4 mr-1" />
+                              <item.icon
+                                className={cn(
+                                  "!w-3.5 !h-3.5",
+                                  state === "collapsed" ? "!w-4 !h-4" : ""
+                                )}
+                              />
                             )}
-                            <span>{item.title}</span>
+                            <span className="text-[16px]">{item.title}</span>
                           </SidebarMenuButton>
                         </Link>
                       )}
