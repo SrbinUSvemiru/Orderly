@@ -14,6 +14,7 @@ import {
 import React from "react";
 import Link from "next/link";
 import { SidebarTrigger } from "../ui/sidebar";
+import { cn } from "@/lib/utils";
 
 function GlobalHeader() {
   const { headerData } = useHeaderStore();
@@ -22,7 +23,7 @@ function GlobalHeader() {
 
   return (
     <header className="flex dark:bg-zinc-900 bg-white justify-end md:rounded-tl-2xl  items-center  space-x-4 px-6  py-1 min-h-[54px]">
-      <SidebarTrigger className="mr-auto" />
+      <SidebarTrigger className={cn(!breadcrumbArrayLength && "mr-auto")} />
       {breadcrumbArrayLength && (
         <Breadcrumb className="mr-auto">
           <BreadcrumbList>

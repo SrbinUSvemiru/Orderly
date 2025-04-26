@@ -19,9 +19,12 @@ import { Input } from "./ui/input";
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export const SignInForm = () => {
   const router = useRouter();
+  const [isMutating, setisMutating] = useState(false);
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -32,6 +35,7 @@ export const SignInForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+    setisMutating(true);
     const response = await signIn("credentials", {
       email: values.email,
       password: values.password,
@@ -80,6 +84,7 @@ export const SignInForm = () => {
         />
 
         <Button type="submit" className="w-full mt-8">
+          {isMutating && <Loader2 className="animate-spin" />}
           Sign in
         </Button>
       </form>
