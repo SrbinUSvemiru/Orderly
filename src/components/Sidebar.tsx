@@ -57,6 +57,7 @@ import SidebarSkeleton from "./skeleton/sidebar";
 import React from "react";
 import { SERVER_URL } from "@/constants/server";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface SidebarItem {
   id: string;
@@ -317,122 +318,126 @@ export default function AppSidebar() {
       variant="inset"
       collapsible="icon"
     >
-      <>
-        <SidebarHeader className="p-3 flex-row items-center justify-start h-14">
-          {/* <Button className="w-full" onClick={addOrg}>
+      <SidebarHeader>
+        <Image
+          src="/primas.png"
+          alt="logo"
+          width={70}
+          height={32}
+          className="-rotate-1"
+        />
+        {/* <Button className="w-full" onClick={addOrg}>
           Add org.
         </Button> */}
-        </SidebarHeader>
+      </SidebarHeader>
 
-        <SidebarContent>
-          <SidebarGroup className="py-4">
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {!sidebarItems?.length ? (
-                  <SidebarSkeleton />
-                ) : (
-                  sidebarItems?.map((item: SidebarItem) => (
-                    <React.Fragment key={item.id}>
-                      {item?.type === "collapsible" && state === "expanded" && (
-                        <SidebarCollapsibleItem
-                          item={item}
-                          onClick={() => setOpenMobile(false)}
-                          state={state}
-                        />
-                      )}
-                      {item?.type === "popover" ||
-                      (state === "collapsed" &&
-                        item?.type === "collapsible") ? (
-                        <SidebarPopoverItem
-                          item={item}
-                          onClick={() => setOpenMobile(false)}
-                          state={state}
-                        />
-                      ) : null}
-                      {item?.type === "default" && (
-                        <Link
-                          href={item.url || ""}
-                          onClick={() => setOpenMobile(false)}
-                        >
-                          <SidebarMenuButton className="cursor-pointer flex w-full gap-2">
-                            {item.icon && (
-                              <item.icon
-                                className={cn(
-                                  "!w-3.5 !h-3.5",
-                                  state === "collapsed" ? "!w-4 !h-4" : ""
-                                )}
-                              />
-                            )}
-                            <span className="text-[16px]">{item.title}</span>
-                          </SidebarMenuButton>
-                        </Link>
-                      )}
-                    </React.Fragment>
-                  ))
-                )}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton className="h-full cursor-pointer">
-                    <User2 />
-                    {!user?.id ? (
-                      <Skeleton className="min-w-[90%] min-h-full" />
-                    ) : (
-                      <Tooltip
-                        delayDuration={1000}
-                        text={[
-                          user?.lastName
-                            ? `${user?.firstName} ${user?.lastName}`
-                            : user?.firstName || "",
-                          user?.email,
-                        ]}
-                      >
-                        <div className="flex-col items-start justify-center overflow-hidden">
-                          <p className="overflow-hidden truncate">
-                            {user?.lastName
-                              ? `${user?.firstName} ${user?.lastName}`
-                              : user?.firstName || ""}
-                          </p>
-
-                          <p className="overflow-hidden truncate">
-                            {user?.email}
-                          </p>
-                        </div>
-                      </Tooltip>
+      <SidebarContent>
+        <SidebarGroup className="py-4">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {!sidebarItems?.length ? (
+                <SidebarSkeleton />
+              ) : (
+                sidebarItems?.map((item: SidebarItem) => (
+                  <React.Fragment key={item.id}>
+                    {item?.type === "collapsible" && state === "expanded" && (
+                      <SidebarCollapsibleItem
+                        item={item}
+                        onClick={() => setOpenMobile(false)}
+                        state={state}
+                      />
                     )}
-                    <ChevronUp className="ml-auto" />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" asChild>
-                  <DropdownMenuItem>
-                    <SidebarMenuButton
-                      variant="outline"
-                      className="cursor-pointer"
-                      onClick={() => {
-                        localStorage.removeItem("user-storage");
-                        localStorage.removeItem("header-storage");
-                        signOut({
-                          redirect: true,
-                          callbackUrl: `${SERVER_URL}/sign-in`,
-                        });
-                      }}
+                    {item?.type === "popover" ||
+                    (state === "collapsed" && item?.type === "collapsible") ? (
+                      <SidebarPopoverItem
+                        item={item}
+                        onClick={() => setOpenMobile(false)}
+                        state={state}
+                      />
+                    ) : null}
+                    {item?.type === "default" && (
+                      <Link
+                        href={item.url || ""}
+                        onClick={() => setOpenMobile(false)}
+                      >
+                        <SidebarMenuButton className="cursor-pointer flex w-full gap-2">
+                          {item.icon && (
+                            <item.icon
+                              className={cn(
+                                "!w-3.5 !h-3.5",
+                                state === "collapsed" ? "!w-4 !h-4" : ""
+                              )}
+                            />
+                          )}
+                          <span className="text-[16px]">{item.title}</span>
+                        </SidebarMenuButton>
+                      </Link>
+                    )}
+                  </React.Fragment>
+                ))
+              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton className="h-full cursor-pointer">
+                  <User2 />
+                  {!user?.id ? (
+                    <Skeleton className="min-w-[90%] min-h-full" />
+                  ) : (
+                    <Tooltip
+                      delayDuration={1000}
+                      text={[
+                        user?.lastName
+                          ? `${user?.firstName} ${user?.lastName}`
+                          : user?.firstName || "",
+                        user?.email,
+                      ]}
                     >
-                      <LogOut />
-                      <span> Sign out</span>
-                    </SidebarMenuButton>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
-      </>
+                      <div className="flex-col items-start justify-center overflow-hidden">
+                        <p className="overflow-hidden truncate">
+                          {user?.lastName
+                            ? `${user?.firstName} ${user?.lastName}`
+                            : user?.firstName || ""}
+                        </p>
+
+                        <p className="overflow-hidden truncate">
+                          {user?.email}
+                        </p>
+                      </div>
+                    </Tooltip>
+                  )}
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="top" asChild>
+                <DropdownMenuItem>
+                  <SidebarMenuButton
+                    variant="outline"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      localStorage.removeItem("user-storage");
+                      localStorage.removeItem("header-storage");
+                      signOut({
+                        redirect: true,
+                        callbackUrl: `${SERVER_URL}/sign-in`,
+                      });
+                    }}
+                  >
+                    <LogOut />
+                    <span> Sign out</span>
+                  </SidebarMenuButton>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
