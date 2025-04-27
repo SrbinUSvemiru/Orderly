@@ -1,46 +1,51 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "../../../db/index";
-import { getServerSession } from "next-auth";
-import { authConfig } from "@/db/auth"; // Adjust the import based on your project structure
+
 import { organizations } from "../../../db/schema";
 import { eq } from "drizzle-orm";
+import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getAuthenticatedSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "Unauthorized", success: false },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
-    const session = await getServerSession(authConfig);
 
     const { name } = body;
 
-    if (session) {
-      const organization = await db
-        .select()
-        .from(organizations)
-        .where(eq(organizations.name, name))
-        .then((res) => res[0]); // Drizzle returns an array
+    const organization = await db
+      .select()
+      .from(organizations)
+      .where(eq(organizations.name, name))
+      .then((res) => res[0]); // Drizzle returns an array
 
-      if (organization) {
-        return NextResponse.json(
-          {
-            organization: null,
-            message: "Organization with this name already exists",
-          },
-          { status: 409 }
-        );
-      }
-
-      const newOrganization = await db.insert(organizations).values({
-        name: name,
-      });
-
+    if (organization) {
       return NextResponse.json(
         {
-          organization: newOrganization,
-          message: "Organization created successfully",
+          organization: null,
+          message: "Organization with this name already exists",
         },
-        { status: 201 }
+        { status: 409 }
       );
     }
+
+    const newOrganization = await db.insert(organizations).values({
+      name: name,
+    });
+
+    return NextResponse.json(
+      {
+        organization: newOrganization,
+        message: "Organization created successfully",
+      },
+      { status: 201 }
+    );
+
     return NextResponse.json({ message: "failed" }, { status: 500 });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -53,6 +58,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
+    const session = await getAuthenticatedSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "Unauthorized", success: false },
+        { status: 401 }
+      );
+    }
     const users = await db.query.users.findMany({
       columns: {
         id: true,

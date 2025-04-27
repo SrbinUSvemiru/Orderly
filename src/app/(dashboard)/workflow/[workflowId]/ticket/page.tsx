@@ -51,15 +51,16 @@ function Ticket({ params }: { params: Promise<{ workflowId: string }> }) {
     const response = await addTicket({
       name: values.name,
       stageId: stageId,
-      handleError: () => toast.error("Something went wrong"),
+      handleError: (error) => toast.error(error),
     });
 
-    if (response.success) {
+    if (response?.success) {
       toast.success("Ticket successfully created");
       refetchTickets(stageId);
       refetchTicketsCount(stageId);
       router.push("/workflow/" + workflowId);
     }
+    setMutating(false);
   };
 
   useLayoutEffect(() => {

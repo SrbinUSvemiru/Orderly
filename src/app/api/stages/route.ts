@@ -2,9 +2,17 @@ import { NextResponse, NextRequest } from "next/server";
 import { db } from "../../../db/index";
 import { stages } from "../../../db/schema";
 import { eq } from "drizzle-orm";
+import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getAuthenticatedSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "Unauthorized", success: false },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
     const { name, weight, workflowId } = body;
 
@@ -46,6 +54,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getAuthenticatedSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "Unauthorized", success: false },
+        { status: 401 }
+      );
+    }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

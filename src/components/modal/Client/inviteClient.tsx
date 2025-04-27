@@ -30,8 +30,6 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
 
   const user = useUserStore((state) => state.user);
 
-  console.log(user);
-
   const form = useForm<z.infer<typeof InviteClient>>({
     resolver: zodResolver(InviteClient),
     defaultValues: {
