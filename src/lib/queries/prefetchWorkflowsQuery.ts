@@ -1,8 +1,9 @@
 import { QueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "../../constants/queryKeys";
-import fetchFromServer from "../fetchFromServer";
 
 import { Workflow } from "@/types/workflow";
+
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import fetchFromServer from "../fetchFromServer";
 
 const prefetchWorkflowsQuery = async (queryClient: QueryClient) => {
   await queryClient.prefetchQuery<Workflow[]>({

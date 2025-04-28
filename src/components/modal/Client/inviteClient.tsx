@@ -1,24 +1,26 @@
 "use client";
 
-import { Input } from "../../ui/input";
-import { toast } from "sonner";
-import { useState } from "react";
-import { InviteClient } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
 } from "@/components/ui/form";
-import { Button } from "../../ui/button";
 import { ClientModalData } from "@/stores/modalStore";
-import { Loader2 } from "lucide-react";
 import { useUserStore } from "@/stores/userStore";
+
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { InviteClient } from "./schema";
 
 interface ClientProps {
   modalData: ClientModalData;
@@ -29,8 +31,6 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
   const [isMutating, setMutating] = useState(false);
 
   const user = useUserStore((state) => state.user);
-
-  console.log(user);
 
   const form = useForm<z.infer<typeof InviteClient>>({
     resolver: zodResolver(InviteClient),
@@ -48,7 +48,7 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
         throw new Error("No email provided");
       }
 
-      const response = await fetch(`/api/invite-client`, {
+      const response = await fetch("/api/invite-client", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

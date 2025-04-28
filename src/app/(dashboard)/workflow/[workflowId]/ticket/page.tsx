@@ -1,29 +1,28 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { use, useLayoutEffect, useState } from "react";
-import { TicketSchema } from "@/components/modal/Ticket/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { use, useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+import { TicketSchema } from "@/components/modal/Ticket/schema";
+import { Button } from "@/components/ui/button";
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-
-import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import addTicket from "@/lib/actions/addTicket";
-import { refetchTickets, refetchTicketsCount } from "@/lib/queryConnector";
-
-import { triggerHeader } from "@/lib/triggerHeader";
 import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
-import { useRouter, useSearchParams } from "next/navigation";
+import { refetchTickets, refetchTicketsCount } from "@/lib/queryConnector";
+import { triggerHeader } from "@/lib/triggerHeader";
 
 function Ticket({ params }: { params: Promise<{ workflowId: string }> }) {
   const [isMutating, setMutating] = useState(false);
@@ -51,15 +50,16 @@ function Ticket({ params }: { params: Promise<{ workflowId: string }> }) {
     const response = await addTicket({
       name: values.name,
       stageId: stageId,
-      handleError: () => toast.error("Something went wrong"),
+      handleError: (error) => toast.error(error),
     });
 
-    if (response.success) {
+    if (response?.success) {
       toast.success("Ticket successfully created");
       refetchTickets(stageId);
       refetchTicketsCount(stageId);
       router.push("/workflow/" + workflowId);
     }
+    setMutating(false);
   };
 
   useLayoutEffect(() => {

@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { QUERY_KEYS } from "../../constants/queryKeys";
-import fetchFromServer from "../fetchFromServer";
 import { User } from "../../types/user";
+import fetchFromServer from "../fetchFromServer";
 
 const useGetUserInfoQuery = (
   userId: string,

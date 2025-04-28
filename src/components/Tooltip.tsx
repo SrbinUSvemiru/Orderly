@@ -1,8 +1,8 @@
 import {
-  TooltipProvider,
   Tooltip as TooltipBox,
-  TooltipTrigger,
   TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 interface Props {

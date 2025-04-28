@@ -2,16 +2,16 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 
 import { useModalStore } from "../../stores/modalStore";
-import { Workflow } from "./Workflow/workflow";
+import { Client } from "./Client/inviteClient";
 import { Stage } from "./Stage/stage";
 import { Ticket } from "./Ticket/ticket";
-import { Client } from "./Client/inviteClient";
+import { Workflow } from "./Workflow/workflow";
 
 export function GlobalModal() {
   const { modalData, closeModal } = useModalStore();

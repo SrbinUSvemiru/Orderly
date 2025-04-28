@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { QUERY_KEYS } from "../../constants/queryKeys";
-import fetchFromServer from "../fetchFromServer";
 
 import { Stage } from "@/types/stage";
+
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import fetchFromServer from "../fetchFromServer";
 
 const useGetStagesQuery = (
   workflowId: string,

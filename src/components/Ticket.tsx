@@ -1,14 +1,14 @@
 "use client";
-import { FC } from "react";
-import { Ticket as TicketType } from "@/types/ticket";
-import React from "react";
-
-import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
-import { cn } from "@/lib/utils";
-import getDataFromUnixTimestamp from "@/lib/date";
+import { CSS } from "@dnd-kit/utilities";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { FC } from "react";
+import React from "react";
+
+import getDataFromUnixTimestamp from "@/lib/date";
+import { cn } from "@/lib/utils";
+import { Ticket as TicketType } from "@/types/ticket";
 
 const Ticket: FC<{
   ticket: TicketType;

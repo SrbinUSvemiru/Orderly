@@ -1,20 +1,22 @@
 "use client";
 
+import Link from "next/link";
+import React from "react";
+
+import { cn } from "@/lib/utils";
 import { useHeaderStore } from "@/stores/headerStore";
-import { Workflow } from "./workflow";
-import { Client } from "./client";
+
 import {
   Breadcrumb,
-  BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbSeparator,
+  BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "../ui/breadcrumb";
-import React from "react";
-import Link from "next/link";
 import { SidebarTrigger } from "../ui/sidebar";
-import { cn } from "@/lib/utils";
+import { Client } from "./client";
+import { Workflow } from "./workflow";
 
 function GlobalHeader() {
   const { headerData } = useHeaderStore();
@@ -24,6 +26,7 @@ function GlobalHeader() {
   return (
     <header className="flex dark:bg-zinc-900 bg-white justify-end md:rounded-tl-2xl  items-center  space-x-4 px-6  py-1 min-h-[54px]">
       <SidebarTrigger className={cn(!breadcrumbArrayLength && "mr-auto")} />
+
       {breadcrumbArrayLength && (
         <Breadcrumb className="mr-auto">
           <BreadcrumbList>

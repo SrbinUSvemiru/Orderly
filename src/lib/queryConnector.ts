@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+
 import { QUERY_KEYS } from "../constants/queryKeys";
 
 type QueryConnector = {

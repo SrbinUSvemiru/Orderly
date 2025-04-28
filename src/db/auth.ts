@@ -1,13 +1,15 @@
-import { NextAuthOptions } from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { db } from "./index";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import { users } from "./schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+
 import { LoginSchema } from "@/types/login-schema";
 import { User } from "@/types/user";
+
+import { db } from "./index";
+import { users } from "./schema";
 
 export const authConfig: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,

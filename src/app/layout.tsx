@@ -1,16 +1,18 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { cookies } from "next/headers";
-import AuthProvider from "@/components/AuthProvider";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { GlobalModal } from "@/components/modal/GlobalModal";
-import { ZustandProvider } from "@/components/providers/ZustandProvider";
-import { QueryProvider } from "@/components/providers/QueryProvider";
+
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
+
+import AuthProvider from "@/components/AuthProvider";
+import { GlobalModal } from "@/components/modal/GlobalModal";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ZustandProvider } from "@/components/providers/ZustandProvider";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

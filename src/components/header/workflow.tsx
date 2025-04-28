@@ -1,9 +1,11 @@
 "use client";
 
-import { Button } from "../ui/button";
-import { WorkflowHeaderData } from "@/stores/headerStore";
-import { triggerModal } from "@/lib/triggerModal";
 import { CirclePlus } from "lucide-react";
+
+import { triggerModal } from "@/lib/triggerModal";
+import { WorkflowHeaderData } from "@/stores/headerStore";
+
+import { Button } from "../ui/button";
 
 interface WorkflowProps {
   headerData: WorkflowHeaderData;

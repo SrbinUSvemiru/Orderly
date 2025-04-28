@@ -1,6 +1,7 @@
-import { User } from "@/types/user";
-import fetchFromServer from "../fetchFromServer";
 import { ErrorHandler } from "@/types/error";
+import { User } from "@/types/user";
+
+import fetchFromServer from "../fetchFromServer";
 
 const updateUser = async (
   userId: string,

@@ -1,24 +1,21 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
-import prefetchStagesQuery from "@/lib/queries/prefetchStagesQuery";
+// import {
+//   dehydrate,
+//   HydrationBoundary,
+//   QueryClient,
+// } from "@tanstack/react-query";
+// import prefetchStagesQuery from "@/lib/queries/prefetchStagesQuery";
 import WorkflowsPage from "./WorkflowsPage";
 
 type Params = Promise<{ workflowId: string }>;
 
 async function Workflows(props: { params: Params }) {
-  const queryClient = new QueryClient();
   const params = await props.params;
 
-  await prefetchStagesQuery(queryClient, params.workflowId);
-
-  const dehydratedState = dehydrate(queryClient);
+  // const dehydratedState = dehydrate(queryClient);
   return (
-    <HydrationBoundary state={dehydratedState}>
-      <WorkflowsPage workflowId={params.workflowId} />
-    </HydrationBoundary>
+    // <HydrationBoundary state={dehydratedState}>
+    <WorkflowsPage workflowId={params.workflowId} />
+    // </HydrationBoundary>
   );
 }
 

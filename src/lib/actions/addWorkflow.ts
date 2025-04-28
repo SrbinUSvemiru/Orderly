@@ -1,5 +1,6 @@
-import fetchFromServer from "../fetchFromServer";
 import { ErrorHandler } from "@/types/error";
+
+import fetchFromServer from "../fetchFromServer";
 
 const addWorkflow = async ({
   userId,
@@ -19,7 +20,7 @@ const addWorkflow = async ({
   }
 
   const response = await fetchFromServer(
-    `/api/workflows`,
+    "/api/workflows",
     {
       method: "POST",
       headers: {

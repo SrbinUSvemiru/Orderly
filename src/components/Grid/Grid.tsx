@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
-import styles from "./Grid.module.css";
+
 import { FormItem } from "../ui/form";
+import styles from "./Grid.module.css";
 
 interface GridProps {
   children: React.ReactNode;
@@ -14,7 +15,7 @@ interface FormGridProps {
   className?: string;
   columns: number;
   gap?: number;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: () => void;
 }
 
 interface GridItemProps {
@@ -91,4 +92,4 @@ function FormGrid({
   );
 }
 
-export { Grid, GridItem, FormGrid, FormGridItem };
+export { FormGrid, FormGridItem, Grid, GridItem };

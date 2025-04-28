@@ -1,5 +1,6 @@
-import fetchFromServer from "../fetchFromServer";
 import { ErrorHandler } from "@/types/error";
+
+import fetchFromServer from "../fetchFromServer";
 
 const addstage = async ({
   name,
@@ -15,7 +16,7 @@ const addstage = async ({
   }
 
   const response = await fetchFromServer(
-    `/api/stages`,
+    "/api/stages",
     {
       method: "POST",
       headers: {

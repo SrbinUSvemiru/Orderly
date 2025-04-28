@@ -1,11 +1,11 @@
-import fetchFromServer from "../fetchFromServer";
-
 import { Ticket } from "@/types/ticket";
+
+import fetchFromServer from "../fetchFromServer";
 
 export type UpdateTicketParams = {
   ticketId: string;
   values: Partial<Ticket>;
-  handleError?: (error: unknown) => void;
+  handleError?: (_error: unknown) => void;
 };
 
 const updateTicket = async ({

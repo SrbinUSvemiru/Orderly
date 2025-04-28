@@ -1,5 +1,6 @@
-import { authConfig } from "@/db/auth";
 import NextAuth from "next-auth";
+
+import { authConfig } from "@/db/auth";
 
 const handler = NextAuth(authConfig);
 

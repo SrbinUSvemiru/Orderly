@@ -1,36 +1,39 @@
 "use client";
 
-import Stage from "@/components/Stage";
-import { triggerHeader } from "@/lib/triggerHeader";
-import { Stage as StageType } from "@/types/stage";
 import {
+  closestCenter,
   DndContext,
   DragEndEvent,
-  DragStartEvent,
+  DragOverEvent,
   DragOverlay,
-  closestCenter,
+  DragStartEvent,
+  PointerSensor,
   useSensor,
   useSensors,
-  PointerSensor,
-  DragOverEvent,
 } from "@dnd-kit/core";
-import { Ticket as TicketType } from "@/types/ticket";
-import Ticket from "@/components/Ticket";
-// import { restrictToParentElement } from "@dnd-kit/modifiers";
-
-import { useCallback, useLayoutEffect, useState } from "react";
-
-import { toast } from "sonner";
-import useGetStagesQuery from "@/lib/queries/useGetStagesQuery";
-import updateTicket from "@/lib/actions/updateTicket";
-import DashboardSkeleton from "@/components/skeleton/dashboard";
-import { createPortal } from "react-dom";
 import { arrayMove } from "@dnd-kit/sortable";
+// import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { useCallback, useLayoutEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { toast } from "sonner";
+
+import DashboardSkeleton from "@/components/skeleton/dashboard";
+import Stage from "@/components/Stage";
+import Ticket from "@/components/Ticket";
+import updateTicket from "@/lib/actions/updateTicket";
+import useGetStagesQuery from "@/lib/queries/useGetStagesQuery";
 import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
 import { refetchTicketsCount } from "@/lib/queryConnector";
+import { triggerHeader } from "@/lib/triggerHeader";
+import { Stage as StageType } from "@/types/stage";
+import { Ticket as TicketType } from "@/types/ticket";
 
 function Workflows({ workflowId }: { workflowId: string }) {
   const workflows = useGetWorkflowsQuery();
+
+  const { data: stages, isLoading } = useGetStagesQuery(workflowId, {
+    enabled: !!workflowId,
+  });
 
   const [data, setData] = useState<Map<string, TicketType[]>>(new Map());
 
@@ -42,10 +45,6 @@ function Workflows({ workflowId }: { workflowId: string }) {
   const sensor = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
   );
-
-  const { data: stages, isLoading } = useGetStagesQuery(workflowId, {
-    enabled: !!workflowId,
-  });
 
   const moveTicketBetweenStages = useCallback(
     ({
@@ -105,11 +104,17 @@ function Workflows({ workflowId }: { workflowId: string }) {
     const overId = over?.id;
 
     if (activeId === overId || !overId) return;
-
+    const activeStageId = active.data.current?.stageId;
     const overStageId =
       over.data.current?.type === "ticket"
         ? over.data.current?.stageId
         : over.id;
+
+    if (!activeStageId || !overStageId) return;
+
+    if (activeStageId === overStageId) {
+      return;
+    }
 
     setData((prev) =>
       moveTicketBetweenStages({

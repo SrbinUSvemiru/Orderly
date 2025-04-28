@@ -1,15 +1,14 @@
-import {
-  pgTable,
-  pgEnum,
-  uuid,
-  boolean,
-  text,
-  integer,
-  varchar,
-  bigint,
-} from "drizzle-orm/pg-core";
-
 import { relations } from "drizzle-orm";
+import {
+  bigint,
+  boolean,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const organizationTypeEnum = pgEnum("organization_type", [
   "enterprise",

@@ -1,11 +1,21 @@
+import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
+import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
+
 import { db } from "../../../db/index";
 import { tickets } from "../../../db/schema";
 
-import { NextRequest, NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
-
 export async function POST(req: NextRequest) {
   try {
+    const session = await getAuthenticatedSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "Unauthorized", success: false },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { name, stageId, ownerId } = body;
 
@@ -43,7 +53,7 @@ export async function GET(req: NextRequest) {
         .select()
         .from(tickets)
         .where(eq(tickets.stageId, stageId))
-        .then((res) => res); // Drizzle returns an array
+        .then((res) => res);
 
       const openCount = await db.$count(tickets, eq(tickets.stageId, stageId));
 
@@ -64,7 +74,7 @@ export async function GET(req: NextRequest) {
         .select()
         .from(tickets)
         .where(eq(tickets.id, id))
-        .then((res) => res); // Drizzle returns an array
+        .then((res) => res);
       if (ticket) {
         return NextResponse.json(
           {
@@ -89,6 +99,13 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const session = await getAuthenticatedSession();
+    if (!session) {
+      return NextResponse.json(
+        { message: "Unauthorized", success: false },
+        { status: 401 }
+      );
+    }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     const body = await req.json();
@@ -103,7 +120,7 @@ export async function PATCH(req: NextRequest) {
 
     await db
       .update(tickets)
-      .set({ ...updateData }) // Update only provided fields
+      .set({ ...updateData })
       .where(eq(tickets.id, id));
 
     return NextResponse.json(

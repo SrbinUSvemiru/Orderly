@@ -36,7 +36,7 @@ export type ModalData =
 
 interface ModalStore {
   modalData: ModalData | null;
-  openModal: (data: ModalData) => void;
+  openModal: (_data: ModalData) => void;
   closeModal: () => void;
 }
 

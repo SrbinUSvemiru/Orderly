@@ -1,10 +1,10 @@
 "use client";
 
+import { createContext, useContext } from "react";
+
 import { useHeaderStore } from "@/stores/headerStore";
 import { useModalStore } from "@/stores/modalStore";
 import { useUserStore } from "@/stores/userStore";
-
-import { createContext, useContext } from "react";
 
 interface ZustandContextType {
   useUserStore: typeof useUserStore;
