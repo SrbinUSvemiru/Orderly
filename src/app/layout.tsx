@@ -11,8 +11,8 @@ import { GlobalModal } from "@/components/modal/GlobalModal";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ZustandProvider } from "@/components/providers/ZustandProvider";
-import { SidebarProvider } from "@/components/__ui/sidebar";
-import { Toaster } from "@/components/__ui/sonner";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

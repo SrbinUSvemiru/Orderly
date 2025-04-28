@@ -14,13 +14,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/__ui/form";
+} from "@/components/ui/form";
 import addStage from "@/lib/actions/addStage";
 import { refetchStages } from "@/lib/queryConnector";
 import { StageModalData } from "@/stores/modalStore";
 
-import { Button } from "../../__ui/button";
-import { Input } from "../../__ui/input";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 import { StageSchema } from "./schema";
 
 interface StageProps {

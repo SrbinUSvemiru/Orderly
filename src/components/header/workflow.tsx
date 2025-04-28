@@ -5,7 +5,7 @@ import { CirclePlus } from "lucide-react";
 import { triggerModal } from "@/lib/triggerModal";
 import { WorkflowHeaderData } from "@/stores/headerStore";
 
-import { Button } from "../__ui/button";
+import { Button } from "../ui/button";
 
 interface WorkflowProps {
   headerData: WorkflowHeaderData;

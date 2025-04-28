@@ -23,7 +23,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/__ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -37,7 +37,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   useSidebar,
-} from "@/components/__ui/sidebar";
+} from "@/components/ui/sidebar";
 import { SERVER_URL } from "@/constants/server";
 import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
 import { triggerModal } from "@/lib/triggerModal";
@@ -50,9 +50,9 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "./__ui/collapsible";
-import { DropdownMenuSeparator } from "./__ui/dropdown-menu";
-import { Skeleton } from "./__ui/skeleton";
+} from "./ui/collapsible";
+import { DropdownMenuSeparator } from "./ui/dropdown-menu";
+import { Skeleton } from "./ui/skeleton";
 
 interface SidebarItem {
   id: string;

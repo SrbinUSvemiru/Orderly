@@ -14,15 +14,15 @@ import { AccountSchema } from "@/types/account-schema";
 import updateUser from "../lib/actions/updateUser";
 import { FormGrid, FormGridItem, GridItem } from "./Grid/Grid";
 import AccountFormSkeleton from "./skeleton/accountForm";
-import { Button } from "./__ui/button";
+import { Button } from "./ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormLabel,
   FormMessage,
-} from "./__ui/form";
-import { Input } from "./__ui/input";
+} from "./ui/form";
+import { Input } from "./ui/input";
 
 export const AccountForm = () => {
   const [isMutating, setisMutating] = useState(false);

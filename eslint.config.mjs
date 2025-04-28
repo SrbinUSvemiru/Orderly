@@ -13,9 +13,8 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-
+  { ignores: ["src/components/ui/**"] },
   {
-    globalIgnores: ["__dirname", "__filename"],
     plugins: {
       "unused-imports": unusedImportsPlugin,
       "simple-import-sort": simpleImportSortPlugin,

@@ -1,6 +1,6 @@
 import GlobalHeader from "@/components/header/GlobalHeader";
 import AppSidebar from "@/components/Sidebar";
-import { Separator } from "@/components/__ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 async function Layout({ children }: { children: React.ReactNode }) {
   return (

@@ -16,9 +16,9 @@ import { Ticket as TicketType } from "@/types/ticket";
 import Droppable from "./Droppable";
 import Ticket from "./Ticket";
 import { Tooltip } from "./Tooltip";
-import { Badge } from "./__ui/badge";
-import { Button } from "./__ui/button";
-import { Separator } from "./__ui/separator";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
 type StageProps = {
   dataTickets?: TicketType[];

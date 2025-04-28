@@ -4,8 +4,8 @@ import { upperFirst } from "lodash";
 import { useTheme } from "next-themes";
 import * as React from "react";
 
-import { Label } from "./__ui/label";
-import { Switch } from "./__ui/switch";
+import { Label } from "./ui/label";
+import { Switch } from "./ui/switch";
 
 export function ModeToggle() {
   const { setTheme, theme } = useTheme();

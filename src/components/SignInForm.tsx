@@ -11,7 +11,7 @@ import { z } from "zod";
 
 import { LoginSchema } from "@/types/login-schema";
 
-import { Button } from "./__ui/button";
+import { Button } from "./ui/button";
 import {
   Form,
   FormControl,
@@ -19,8 +19,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./__ui/form";
-import { Input } from "./__ui/input";
+} from "./ui/form";
+import { Input } from "./ui/input";
 
 export const SignInForm = () => {
   const router = useRouter();

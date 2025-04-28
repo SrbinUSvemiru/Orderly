@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/__ui/tooltip";
+} from "@/components/ui/tooltip";
 
 interface Props {
   text: string | string[];

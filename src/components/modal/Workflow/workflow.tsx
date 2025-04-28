@@ -15,13 +15,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/__ui/form";
+} from "@/components/ui/form";
 import addWorkflow from "@/lib/actions/addWorkflow";
 import { refetchWorkflows } from "@/lib/queryConnector";
 import { WorkflowModalData } from "@/stores/modalStore";
 
-import { Button } from "../../__ui/button";
-import { Input } from "../../__ui/input";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 import { WorkflowSchema } from "./schema";
 
 interface WorkflowProps {

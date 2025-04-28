@@ -2,7 +2,7 @@ import {
   Avatar as Wrapper,
   AvatarFallback,
   AvatarImage,
-} from "@/components/__ui/avatar";
+} from "@/components/ui/avatar";
 
 export default function Avatar({ src }: { src?: string }) {
   return (

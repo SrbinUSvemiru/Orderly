@@ -3,7 +3,7 @@
 import { triggerModal } from "@/lib/triggerModal";
 import { ClientHeaderData } from "@/stores/headerStore";
 
-import { Button } from "../__ui/button";
+import { Button } from "../ui/button";
 
 interface ClientProps {
   headerData: ClientHeaderData;

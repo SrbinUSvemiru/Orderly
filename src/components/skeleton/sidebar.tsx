@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton } from "../__ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 
 function SidebarSkeleton() {
   return (

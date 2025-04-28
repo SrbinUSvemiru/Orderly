@@ -13,8 +13,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "../__ui/breadcrumb";
-import { SidebarTrigger } from "../__ui/sidebar";
+} from "../ui/breadcrumb";
+import { SidebarTrigger } from "../ui/sidebar";
 import { Client } from "./client";
 import { Workflow } from "./workflow";
 

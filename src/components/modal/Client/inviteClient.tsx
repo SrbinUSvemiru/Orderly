@@ -14,12 +14,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/__ui/form";
+} from "@/components/ui/form";
 import { ClientModalData } from "@/stores/modalStore";
 import { useUserStore } from "@/stores/userStore";
 
-import { Button } from "../../__ui/button";
-import { Input } from "../../__ui/input";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 import { InviteClient } from "./schema";
 
 interface ClientProps {

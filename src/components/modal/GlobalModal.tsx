@@ -5,7 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/__ui/dialog";
+} from "@/components/ui/dialog";
 
 import { useModalStore } from "../../stores/modalStore";
 import { Client } from "./Client/inviteClient";

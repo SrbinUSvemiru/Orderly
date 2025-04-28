@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { TicketSchema } from "@/components/modal/Ticket/schema";
-import { Button } from "@/components/__ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,8 +17,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/__ui/form";
-import { Input } from "@/components/__ui/input";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import addTicket from "@/lib/actions/addTicket";
 import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
 import { refetchTickets, refetchTicketsCount } from "@/lib/queryConnector";

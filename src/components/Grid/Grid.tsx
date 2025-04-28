@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-import { FormItem } from "../__ui/form";
+import { FormItem } from "../ui/form";
 import styles from "./Grid.module.css";
 
 interface GridProps {

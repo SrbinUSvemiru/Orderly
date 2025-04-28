@@ -6,8 +6,8 @@ import { User } from "../types/user";
 
 interface UserStore {
   user: User;
-  setUser: (user: User) => void;
-  update: (updates: Partial<User>) => void;
+  setUser: (_user: User) => void;
+  update: (_updates: Partial<User>) => void;
 }
 
 const defaultInitState: User = {

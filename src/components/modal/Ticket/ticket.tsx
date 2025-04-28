@@ -14,13 +14,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/__ui/form";
+} from "@/components/ui/form";
 import addTicket from "@/lib/actions/addTicket";
 import { refetchTickets, refetchTicketsCount } from "@/lib/queryConnector";
 import { TicketModalData } from "@/stores/modalStore";
 
-import { Button } from "../../__ui/button";
-import { Input } from "../../__ui/input";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 import { TicketSchema } from "./schema";
 
 interface StageProps {
