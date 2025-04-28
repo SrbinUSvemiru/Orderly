@@ -1,9 +1,9 @@
 import {
-  TooltipProvider,
   Tooltip as TooltipBox,
-  TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/__ui/tooltip";
 
 interface Props {
   text: string | string[];

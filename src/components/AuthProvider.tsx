@@ -1,9 +1,10 @@
 "use client";
 
-import fetchFromServer from "@/lib/fetchFromServer";
-import { useUserStore } from "@/stores/userStore";
 import { SessionProvider, useSession } from "next-auth/react";
 import { ReactNode, useEffect } from "react";
+
+import fetchFromServer from "@/lib/fetchFromServer";
+import { useUserStore } from "@/stores/userStore";
 
 interface ProviderProps {
   children: ReactNode;

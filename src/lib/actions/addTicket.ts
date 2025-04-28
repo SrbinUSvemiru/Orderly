@@ -1,5 +1,6 @@
-import fetchFromServer from "../fetchFromServer";
 import { ErrorHandler } from "@/types/error";
+
+import fetchFromServer from "../fetchFromServer";
 
 const addTicket = async ({
   name,
@@ -15,7 +16,7 @@ const addTicket = async ({
   }
 
   const response = await fetchFromServer(
-    `/api/tickets`,
+    "/api/tickets",
     {
       method: "POST",
       headers: {

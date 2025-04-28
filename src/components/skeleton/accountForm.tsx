@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../__ui/skeleton";
 
 function AccountFormSkeleton() {
   const n = 5;

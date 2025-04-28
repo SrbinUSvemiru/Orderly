@@ -1,8 +1,9 @@
 "use client";
 
-import { Button } from "../ui/button";
-import { ClientHeaderData } from "@/stores/headerStore";
 import { triggerModal } from "@/lib/triggerModal";
+import { ClientHeaderData } from "@/stores/headerStore";
+
+import { Button } from "../__ui/button";
 
 interface ClientProps {
   headerData: ClientHeaderData;

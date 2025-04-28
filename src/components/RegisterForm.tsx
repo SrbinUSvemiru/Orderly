@@ -1,27 +1,26 @@
 "use client";
 
-import { Button } from "./ui/button";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { RegisterSchema } from "@/types/register-schema";
-import {
-  Form,
-  FormMessage,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormField,
-} from "./ui/form";
-import { useEffect } from "react";
-import { Input } from "./ui/input";
-
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 import { verifyToken } from "@/lib/encryption";
+import { RegisterSchema } from "@/types/register-schema";
+
+import { Button } from "./__ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./__ui/form";
+import { Input } from "./__ui/input";
 
 export const RegisterForm = () => {
   const searchParams = useSearchParams();

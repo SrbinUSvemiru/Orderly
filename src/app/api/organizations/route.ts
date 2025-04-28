@@ -1,9 +1,10 @@
-import { NextResponse, NextRequest } from "next/server";
-import { db } from "../../../db/index";
-
-import { organizations } from "../../../db/schema";
 import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
 import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
+
+import { db } from "../../../db/index";
+import { organizations } from "../../../db/schema";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,7 +46,6 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-
     return NextResponse.json({ message: "failed" }, { status: 500 });
   } catch (error) {
     console.error("Error creating user:", error);

@@ -1,25 +1,27 @@
 "use client";
 
-import { Input } from "../../ui/input";
-import { toast } from "sonner";
-import { useState } from "react";
-import { StageSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
 import {
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  Form,
-} from "@/components/ui/form";
-import { Button } from "../../ui/button";
-import { StageModalData } from "@/stores/modalStore";
-import { Loader2 } from "lucide-react";
+} from "@/components/__ui/form";
 import addStage from "@/lib/actions/addStage";
 import { refetchStages } from "@/lib/queryConnector";
+import { StageModalData } from "@/stores/modalStore";
+
+import { Button } from "../../__ui/button";
+import { Input } from "../../__ui/input";
+import { StageSchema } from "./schema";
 
 interface StageProps {
   modalData: StageModalData;

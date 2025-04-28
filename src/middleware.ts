@@ -1,15 +1,18 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { withAuth } from "next-auth/middleware";
 
 export default withAuth(
   async function middleware(req: NextRequest) {
     const token = await getToken({ req });
     const isAuthenticated = !!token;
 
-    // Redirect authenticated users away from login page
     if (req.nextUrl.pathname.startsWith("/sign-in") && isAuthenticated) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    if (req.nextUrl.pathname.startsWith("/sign-up") && isAuthenticated) {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
@@ -17,7 +20,7 @@ export default withAuth(
   },
   {
     pages: {
-      signIn: "/sign-in", // Redirect unauthorized users to login
+      signIn: "/sign-in",
     },
   }
 );

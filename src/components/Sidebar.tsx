@@ -1,63 +1,58 @@
 "use client";
 
 import {
-  Workflow,
-  ChevronUp,
-  LogOut,
-  User2,
-  ChevronDown,
-  CirclePlus,
-  LucideIcon,
-  Store,
   Building2,
+  ChevronDown,
+  ChevronUp,
+  CirclePlus,
+  LogOut,
+  LucideIcon,
   Settings2,
+  Store,
+  User2,
+  Workflow,
 } from "lucide-react";
-
+import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { useMemo, useState } from "react";
+import React from "react";
 
+import { Tooltip } from "@/components/Tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/__ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarHeader,
-  SidebarFooter,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/components/__ui/sidebar";
+import { SERVER_URL } from "@/constants/server";
+import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
+import { triggerModal } from "@/lib/triggerModal";
+import { cn } from "@/lib/utils";
+import { useUserStore } from "@/stores/userStore";
+import { Workflow as WorkflowType } from "@/types/workflow";
 
-import { Tooltip } from "@/components/Tooltip";
-
-import { signOut } from "next-auth/react";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-
+import SidebarSkeleton from "./skeleton/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "./ui/collapsible";
-import { DropdownMenuSeparator } from "./ui/dropdown-menu";
-import { Skeleton } from "./ui/skeleton";
-import { Workflow as WorkflowType } from "@/types/workflow";
-import Link from "next/link";
-
-import { triggerModal } from "@/lib/triggerModal";
-import { useUserStore } from "@/stores/userStore";
-import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
-import SidebarSkeleton from "./skeleton/sidebar";
-import React from "react";
-import { SERVER_URL } from "@/constants/server";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
+} from "./__ui/collapsible";
+import { DropdownMenuSeparator } from "./__ui/dropdown-menu";
+import { Skeleton } from "./__ui/skeleton";
 
 interface SidebarItem {
   id: string;
@@ -314,25 +309,18 @@ export default function AppSidebar() {
 
   return (
     <Sidebar
-      className="position-relative text-accent-foreground/80"
+      className="position-relative text-accent-foreground/80 mt-4"
       variant="inset"
       collapsible="icon"
     >
-      <SidebarHeader>
-        <Image
-          src="/primas.png"
-          alt="logo"
-          width={70}
-          height={32}
-          className="-rotate-1"
-        />
+      <SidebarHeader className="h-[53px] p-0">
         {/* <Button className="w-full" onClick={addOrg}>
           Add org.
         </Button> */}
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup className="py-4">
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {!sidebarItems?.length ? (

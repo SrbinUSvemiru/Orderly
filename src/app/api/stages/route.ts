@@ -1,8 +1,10 @@
-import { NextResponse, NextRequest } from "next/server";
+import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
+import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
+
 import { db } from "../../../db/index";
 import { stages } from "../../../db/schema";
-import { eq } from "drizzle-orm";
-import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
 
 export async function POST(req: NextRequest) {
   try {

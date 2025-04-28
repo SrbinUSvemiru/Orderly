@@ -1,8 +1,8 @@
+import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
 import { db } from "../../../../db/index";
 import { tickets } from "../../../../db/schema";
-
-import { NextRequest, NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   try {

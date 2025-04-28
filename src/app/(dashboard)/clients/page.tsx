@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { triggerHeader } from "@/lib/triggerHeader";
 import { useUserStore } from "@/stores/userStore";
 

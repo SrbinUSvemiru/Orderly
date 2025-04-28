@@ -1,9 +1,8 @@
+import sgMail from "@sendgrid/mail";
 import { NextRequest, NextResponse } from "next/server";
 
-import sgMail from "@sendgrid/mail";
-import { generateToken } from "@/lib/encryption";
 import { SERVER_URL } from "@/constants/server";
-
+import { generateToken } from "@/lib/encryption";
 import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
 
 const apiKey = process.env.SENDGRID_API_KEY || "";

@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { QUERY_KEYS } from "../../constants/queryKeys";
-import fetchFromServer from "../fetchFromServer";
 
 import { Ticket } from "@/types/ticket";
+
+import { QUERY_KEYS } from "../../constants/queryKeys";
+import fetchFromServer from "../fetchFromServer";
 
 const useGetTicketsQuery = (id: string, options?: { enabled: boolean }) => {
   return useQuery<{ ticket: Ticket }>({

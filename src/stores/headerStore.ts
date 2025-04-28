@@ -61,8 +61,8 @@ export type HeaderData =
 
 interface HeaderStore {
   headerData: HeaderData | null;
-  setHeaderData: (data: HeaderData) => void;
-  setBreadcrumb: (breadcrumb: Breadcrumb) => void;
+  setHeaderData: (_data: HeaderData) => void;
+  setBreadcrumb: (_breadcrumb: Breadcrumb) => void;
 }
 
 export const useHeaderStore = create(

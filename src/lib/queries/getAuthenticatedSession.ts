@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+
 import { authConfig } from "@/db/auth";
 
 export async function getAuthenticatedSession() {

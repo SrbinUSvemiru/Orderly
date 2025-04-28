@@ -1,13 +1,15 @@
-import { NextResponse, NextRequest } from "next/server";
+import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
+import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
+
 import { db } from "../../../db/index";
 import { workflows } from "../../../db/schema";
-import { eq } from "drizzle-orm";
-import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getAuthenticatedSession();
-    if (!session) {
+    if (!session?.user) {
       return NextResponse.json(
         { message: "Unauthorized", success: false },
         { status: 401 }
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     const session = await getAuthenticatedSession();
-    if (!session) {
+    if (!session?.user) {
       return NextResponse.json(
         { message: "Unauthorized", success: false },
         { status: 401 }

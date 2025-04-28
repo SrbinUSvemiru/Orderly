@@ -1,10 +1,12 @@
-import { NextResponse, NextRequest } from "next/server";
+import { hash } from "bcryptjs";
+import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
+import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
+import { RegisterSchema } from "@/types/register-schema";
+
 import { db } from "../../../db/index";
 import { users } from "../../../db/schema";
-import { eq } from "drizzle-orm";
-import { hash } from "bcryptjs";
-import { RegisterSchema } from "@/types/register-schema";
-import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
 
 export async function POST(req: NextRequest) {
   try {

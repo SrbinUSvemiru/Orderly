@@ -1,7 +1,8 @@
 "use client";
 import { create } from "zustand";
-import { User } from "../types/user";
 import { persist } from "zustand/middleware";
+
+import { User } from "../types/user";
 
 interface UserStore {
   user: User;

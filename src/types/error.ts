@@ -3,4 +3,4 @@ export type ServerError = {
   message: string;
 };
 
-export type ErrorHandler = (message?: string) => void;
+export type ErrorHandler = (_message?: string) => void;

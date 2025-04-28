@@ -1,5 +1,6 @@
 import { FC, ReactNode } from "react";
-import { Button } from "./ui/button";
+
+import { Button } from "./__ui/button";
 
 interface GoogleSignInButtonProps {
   children: ReactNode;

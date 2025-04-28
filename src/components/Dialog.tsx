@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/__ui/button";
 import {
   Dialog as DialogProvider,
   DialogContent,
@@ -7,9 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/components/__ui/dialog";
+import { Input } from "@/components/__ui/input";
+import { Label } from "@/components/__ui/label";
 
 type InputField = {
   label: string;

@@ -1,8 +1,9 @@
 "use client";
 
+import { useLayoutEffect } from "react";
+
 import { ModeToggle } from "@/components/ModeToggle";
 import { triggerHeader } from "@/lib/triggerHeader";
-import { useLayoutEffect } from "react";
 
 function General() {
   useLayoutEffect(() => {

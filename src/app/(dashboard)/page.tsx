@@ -1,8 +1,15 @@
-import { authConfig } from "@/db/auth";
-import { getServerSession } from "next-auth";
+"use client";
 
-async function Workflows() {
-  const session = await getServerSession(authConfig);
+import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+
+import prefetchWorkflowsQuery from "@/lib/queries/prefetchWorkflowsQuery";
+
+function Workflows() {
+  const { data: session } = useSession();
+
+  const queryClient = useQueryClient();
+  prefetchWorkflowsQuery(queryClient);
 
   return (
     <>

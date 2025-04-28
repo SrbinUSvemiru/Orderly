@@ -1,4 +1,4 @@
-import { useHeaderStore, HeaderData, Breadcrumb } from "../stores/headerStore";
+import { Breadcrumb,HeaderData, useHeaderStore } from "../stores/headerStore";
 
 export const triggerHeader = (data: HeaderData) => {
   useHeaderStore.getState().setHeaderData(data);

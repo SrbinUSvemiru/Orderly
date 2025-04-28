@@ -1,7 +1,8 @@
 "use client";
+import { useDroppable } from "@dnd-kit/core";
+
 import { cn } from "@/lib/utils";
 import { Stage } from "@/types/stage";
-import { useDroppable } from "@dnd-kit/core";
 
 function Droppable({
   children,

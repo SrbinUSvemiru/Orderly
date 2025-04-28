@@ -1,28 +1,28 @@
 "use client";
 
-import { Button } from "./ui/button";
-import { useState, useEffect, useCallback, useLayoutEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { AccountSchema } from "@/types/account-schema";
 import { toast } from "sonner";
+import { z } from "zod";
+
+import { triggerHeader } from "@/lib/triggerHeader";
+import { useUserStore } from "@/stores/userStore";
+import { AccountSchema } from "@/types/account-schema";
+
+import updateUser from "../lib/actions/updateUser";
+import { FormGrid, FormGridItem, GridItem } from "./Grid/Grid";
+import AccountFormSkeleton from "./skeleton/accountForm";
+import { Button } from "./__ui/button";
 import {
   Form,
-  FormMessage,
-  FormLabel,
   FormControl,
   FormField,
-} from "./ui/form";
-
-import { Input } from "./ui/input";
-
-import { Loader2 } from "lucide-react";
-import { useUserStore } from "@/stores/userStore";
-import updateUser from "../lib/actions/updateUser";
-import AccountFormSkeleton from "./skeleton/accountForm";
-import { triggerHeader } from "@/lib/triggerHeader";
-import { FormGrid, FormGridItem, GridItem } from "./Grid/Grid";
+  FormLabel,
+  FormMessage,
+} from "./__ui/form";
+import { Input } from "./__ui/input";
 
 export const AccountForm = () => {
   const [isMutating, setisMutating] = useState(false);

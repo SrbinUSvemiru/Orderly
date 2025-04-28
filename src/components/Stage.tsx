@@ -1,24 +1,24 @@
 "use client";
-import { FC, useEffect } from "react";
-import { Stage as StageType } from "@/types/stage";
-import React from "react";
-import Droppable from "./Droppable";
-import { Ticket as TicketType } from "@/types/ticket";
-import Ticket from "./Ticket";
-import { Button } from "./ui/button";
-import { CirclePlus } from "lucide-react";
-
-import useGetTicketsQuery from "@/lib/queries/useGetTicketsQuery";
-import { cn } from "@/lib/utils";
-
 import { SortableContext } from "@dnd-kit/sortable";
-import { Badge } from "./ui/badge";
-import { Tooltip } from "./Tooltip";
-import useGetTicketsCountQuery from "@/lib/queries/useGetTicketsCountQuery";
-import { Separator } from "./ui/separator";
+import { CirclePlus } from "lucide-react";
 import Link from "next/link";
+import { FC, useEffect } from "react";
+import React from "react";
+
+import useGetTicketsCountQuery from "@/lib/queries/useGetTicketsCountQuery";
+import useGetTicketsQuery from "@/lib/queries/useGetTicketsQuery";
 import { triggerHeader } from "@/lib/triggerHeader";
+import { cn } from "@/lib/utils";
 import { useHeaderStore } from "@/stores/headerStore";
+import { Stage as StageType } from "@/types/stage";
+import { Ticket as TicketType } from "@/types/ticket";
+
+import Droppable from "./Droppable";
+import Ticket from "./Ticket";
+import { Tooltip } from "./Tooltip";
+import { Badge } from "./__ui/badge";
+import { Button } from "./__ui/button";
+import { Separator } from "./__ui/separator";
 
 type StageProps = {
   dataTickets?: TicketType[];
@@ -53,7 +53,7 @@ const Stage: FC<StageProps> = ({ stage, setData, dataTickets }) => {
     <Droppable
       stage={stage}
       className={cn(
-        "flex-col items-center justify-start shadow-xs border-zinc-200 border dark:bg-zinc-900 dark:border-zinc-700 rounded-lg p-1.5 h-full min-w-[330px]"
+        "flex-col items-center animate-fade-in-ticket justify-start shadow-xs border-zinc-200 border dark:bg-zinc-900 dark:border-zinc-700 rounded-lg p-1.5 h-full min-w-[330px]"
       )}
     >
       <div className="rounded-md px-2   flex items-center justify-between">
@@ -79,7 +79,7 @@ const Stage: FC<StageProps> = ({ stage, setData, dataTickets }) => {
         </Link>
       </div>
       <Separator className="mb-3 mt-1" orientation="horizontal" />
-      <div className="grid gap-2">
+      <div className="grid gap-2 overflow-y-scroll max-h-[calc(100vh-180px)]">
         <SortableContext items={dataTickets?.map((el) => el.id) || []}>
           {dataTickets?.map((el: TicketType) => (
             <Ticket
