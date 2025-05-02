@@ -3,12 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { signIn } from "@/lib/actions/signIn";
 import { LoginSchema } from "@/types/login-schema";
 
 import { Button } from "./ui/button";
@@ -23,8 +23,8 @@ import {
 import { Input } from "./ui/input";
 
 export const SignInForm = () => {
-  const router = useRouter();
   const [isMutating, setisMutating] = useState(false);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -36,18 +36,20 @@ export const SignInForm = () => {
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
     setisMutating(true);
-    const response = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    });
-    if (response?.error) {
-      toast.error(response.error);
-    } else {
-      console.log("Log-in succesfull");
+
+    const res = await signIn(values);
+    if (res?.success) {
       router.push("/");
+    } else {
+      toast.error(res?.message);
     }
+    setisMutating(false);
   };
+
+  useEffect(() => {
+    localStorage.removeItem("user-storage");
+    localStorage.removeItem("header-storage");
+  }, []);
 
   return (
     <Form {...form}>

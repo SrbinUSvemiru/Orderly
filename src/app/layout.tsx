@@ -2,17 +2,20 @@ import "./globals.css";
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 
-import AuthProvider from "@/components/AuthProvider";
 import { GlobalModal } from "@/components/modal/GlobalModal";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ZustandProvider } from "@/components/providers/ZustandProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { getUserFromSession } from "@/lib/actions/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +39,35 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  const user = await getUserFromSession(cookieStore);
+
+  let fullUser = null;
+
+  if (user) {
+    const res = await db.query.users.findFirst({
+      columns: {
+        id: true,
+        email: true,
+        role: true,
+        firstName: true,
+        organizationId: true,
+        createdAt: true,
+        lastName: true,
+        active: true,
+      },
+      where: eq(users.id, user.id),
+    });
+
+    fullUser = res
+      ? {
+          ...res,
+          firstName: res.firstName ?? "",
+          lastName: res.lastName ?? "",
+          organizationId: res.organizationId ?? "",
+          createdAt: res.createdAt ?? 0,
+        }
+      : null;
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -45,23 +77,21 @@ export default async function RootLayout({
         <SpeedInsights />
         <Analytics />
         <QueryProvider>
-          <AuthProvider>
-            <ZustandProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <GlobalModal />
-                <SidebarProvider defaultOpen={defaultOpen}>
-                  <Toaster richColors />
+          <ZustandProvider initialUser={fullUser}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <GlobalModal />
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <Toaster richColors />
 
-                  <main className="w-full">{children}</main>
-                </SidebarProvider>
-              </ThemeProvider>
-            </ZustandProvider>
-          </AuthProvider>
+                <main className="w-full">{children}</main>
+              </SidebarProvider>
+            </ThemeProvider>
+          </ZustandProvider>
         </QueryProvider>
       </body>
     </html>

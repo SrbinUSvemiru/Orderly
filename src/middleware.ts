@@ -1,30 +1,60 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { withAuth } from "next-auth/middleware";
+import { type NextRequest, NextResponse } from "next/server";
 
-export default withAuth(
-  async function middleware(req: NextRequest) {
-    const token = await getToken({ req });
-    const isAuthenticated = !!token;
+import {
+  getUserFromSession,
+  updateUserSessionExpiration,
+} from "./lib/actions/auth";
+import { logOut } from "./lib/actions/logOut";
 
-    if (req.nextUrl.pathname.startsWith("/sign-in") && isAuthenticated) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+const privateRoutes = ["/", "workflow", "settings", "clients", "inventory"];
+const publicRoutes = ["sign-in"];
+const adminRoutes = ["/admin"];
 
-    if (req.nextUrl.pathname.startsWith("/sign-up") && isAuthenticated) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+export async function middleware(request: NextRequest) {
+  const response = (await middlewareAuth(request)) ?? NextResponse.next();
 
-    return NextResponse.next();
-  },
-  {
-    pages: {
-      signIn: "/sign-in",
+  await updateUserSessionExpiration({
+    set: (key, value, options) => {
+      response.cookies.set({ ...options, name: key, value });
     },
+    get: (key) => request.cookies.get(key),
+  });
+
+  return response;
+}
+
+async function middlewareAuth(request: NextRequest) {
+  const rootPath = request.nextUrl.pathname.split("/")[1] || "/";
+
+  if (privateRoutes.includes(rootPath)) {
+    const user = await getUserFromSession(request.cookies);
+
+    if (user === null) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
   }
-);
+
+  if (publicRoutes.includes(rootPath)) {
+    const user = await getUserFromSession(request.cookies);
+    if (user && rootPath === "sign-in") {
+      await logOut();
+    }
+  }
+
+  if (adminRoutes.includes(request.nextUrl.pathname)) {
+    const user = await getUserFromSession(request.cookies);
+    if (user === null) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+    // if (user.role !== "admin") {
+    //   return NextResponse.redirect(new URL("/", request.url))
+    // }
+  }
+}
 
 export const config = {
-  matcher: ["/((?!_next|api|sign-in|favicon.ico|static|public).*)"],
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+  ],
 };

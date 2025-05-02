@@ -5,11 +5,12 @@ export type User = {
   firstName: string;
   lastName?: string;
   name?: string;
-  createdAt: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
+  salt?: string;
+  createdAt: number;
+  updatedAt?: number;
+  deletedAt?: number;
   active: boolean;
   organizationId: string;
   image?: string | null;
-  type: string;
+  role: string;
 };

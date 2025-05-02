@@ -1,26 +1,18 @@
 "use client";
 
-import { SessionProvider, useSession } from "next-auth/react";
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 import fetchFromServer from "@/lib/fetchFromServer";
 import { useUserStore } from "@/stores/userStore";
 
 interface ProviderProps {
-  children: ReactNode;
+  initialUser: {
+    id: string;
+    role: string;
+  } | null;
 }
 
-export default function AuthProvider({ children }: ProviderProps) {
-  return (
-    <SessionProvider>
-      <SessionSync />
-      {children}
-    </SessionProvider>
-  );
-}
-
-function SessionSync() {
-  const { data: session, status } = useSession();
+export function SessionSync({ initialUser }: ProviderProps) {
   const setUser = useUserStore((state) => state.setUser);
   const user = useUserStore((state) => state.user);
 
@@ -35,10 +27,10 @@ function SessionSync() {
       }
     };
 
-    if (status === "authenticated" && session?.user && !user?.id) {
-      getUser(session.user.id);
+    if (initialUser) {
+      getUser(initialUser.id);
     }
-  }, [session, status, setUser, user?.id]);
+  }, [initialUser, setUser, user?.id]);
 
   return null;
 }

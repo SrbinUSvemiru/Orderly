@@ -1,19 +1,26 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
+import { useLayoutEffect } from "react";
 
 import prefetchWorkflowsQuery from "@/lib/queries/prefetchWorkflowsQuery";
+import { triggerHeader } from "@/lib/triggerHeader";
+import { useUserStore } from "@/stores/userStore";
 
 function Workflows() {
-  const { data: session } = useSession();
-
   const queryClient = useQueryClient();
   prefetchWorkflowsQuery(queryClient);
+  const user = useUserStore((state) => state.user);
+
+  useLayoutEffect(() => {
+    triggerHeader({ type: "default" });
+  }, []);
 
   return (
     <>
-      <p>Welcome back {session?.user?.name}</p>
+      <p>
+        Welcome back {user?.firstName} {user?.lastName}
+      </p>
     </>
   );
 }

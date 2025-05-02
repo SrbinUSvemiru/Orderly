@@ -1,21 +1,11 @@
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
-
 import { db } from "../../../db/index";
 import { tickets } from "../../../db/schema";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getAuthenticatedSession();
-    if (!session) {
-      return NextResponse.json(
-        { message: "Unauthorized", success: false },
-        { status: 401 }
-      );
-    }
-
     const body = await req.json();
     const { name, stageId, ownerId } = body;
 
@@ -99,13 +89,6 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const session = await getAuthenticatedSession();
-    if (!session) {
-      return NextResponse.json(
-        { message: "Unauthorized", success: false },
-        { status: 401 }
-      );
-    }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     const body = await req.json();

@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { signUp } from "@/lib/actions/signUp";
 import { verifyToken } from "@/lib/encryption";
 import { RegisterSchema } from "@/types/register-schema";
 
@@ -49,31 +50,11 @@ export const RegisterForm = () => {
         email: data?.email || "",
       });
     }
-    try {
-      const expirationTime = Date.now() + 3600000;
-
-      const response = await fetch("/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          confirmPassword: values.confirmPassword,
-          emailVerificationExpires: new Date(expirationTime),
-        }),
-      });
-
-      if (response.ok) {
-        router.push("/sign-in");
-      } else {
-        toast.error(response.ok);
-      }
-    } catch (error) {
-      console.log(error);
+    const res = await signUp(values);
+    if (res?.success) {
+      router.push("/sign-in");
+    } else {
+      toast.error(res?.message);
     }
   };
 

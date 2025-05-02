@@ -3,21 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { SERVER_URL } from "@/constants/server";
 import { generateToken } from "@/lib/encryption";
-import { getAuthenticatedSession } from "@/lib/queries/getAuthenticatedSession";
 
 const apiKey = process.env.SENDGRID_API_KEY || "";
 const templateId = process.env.SENDGRID_REGISTER_TEMPLATE_ID || "";
 sgMail.setApiKey(apiKey);
 
 export async function POST(req: NextRequest) {
-  const session = await getAuthenticatedSession();
-  if (!session) {
-    return NextResponse.json(
-      { message: "Unauthorized", success: false },
-      { status: 401 }
-    );
-  }
-
   try {
     const body = await req.json();
     const { email, organizationId } = body;
