@@ -10,19 +10,19 @@ interface UserStore {
   update: (_updates: Partial<User>) => void;
 }
 
-const defaultInitState: User = {
+export const defaultInitState: User = {
   id: "",
   email: "",
   phone: "",
   firstName: "",
   lastName: "",
   name: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: 0,
+  updatedAt: 0,
   deletedAt: undefined,
   active: false,
   organizationId: "",
-  type: "",
+  role: "",
   image: "",
 };
 

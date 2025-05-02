@@ -13,7 +13,7 @@ import {
   Workflow,
 } from "lucide-react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import React from "react";
 
@@ -38,7 +38,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { SERVER_URL } from "@/constants/server";
+import { logOut } from "@/lib/actions/logOut";
 import useGetWorkflowsQuery from "@/lib/queries/useGetWorkflowsQuery";
 import { triggerModal } from "@/lib/triggerModal";
 import { cn } from "@/lib/utils";
@@ -293,6 +293,8 @@ export default function AppSidebar() {
   const user = useUserStore((state) => state.user);
   const { state, setOpenMobile } = useSidebar();
 
+  const router = useRouter();
+
   const { data: workflows } = useGetWorkflowsQuery();
 
   const sidebarItems = useMemo(
@@ -408,13 +410,11 @@ export default function AppSidebar() {
                   <SidebarMenuButton
                     variant="outline"
                     className="cursor-pointer"
-                    onClick={() => {
+                    onClick={async () => {
                       localStorage.removeItem("user-storage");
                       localStorage.removeItem("header-storage");
-                      signOut({
-                        redirect: true,
-                        callbackUrl: `${SERVER_URL}/sign-in`,
-                      });
+                      await logOut();
+                      router.push("/sign-in");
                     }}
                   >
                     <LogOut />

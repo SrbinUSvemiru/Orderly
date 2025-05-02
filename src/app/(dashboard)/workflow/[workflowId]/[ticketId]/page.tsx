@@ -36,7 +36,6 @@ function Ticket({
   const { workflowId, ticketId } = use(params);
 
   const { data: ticket } = useGetTicketQuery(ticketId, { enabled: !!ticketId });
-  console.log(ticket);
 
   const workflows = useGetWorkflowsQuery();
 

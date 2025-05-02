@@ -22,7 +22,7 @@ export interface Breadcrumb {
 }
 
 interface BaseHeaderData {
-  title: string;
+  title?: string;
   type?: string;
   breadcrumb?: Breadcrumb[];
   action?: () => void;

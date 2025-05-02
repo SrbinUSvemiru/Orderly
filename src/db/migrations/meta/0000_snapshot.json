@@ -1,9 +1,102 @@
 {
-  "id": "8978e66d-cd13-40e1-b195-7bd9415b35c1",
+  "id": "3b60a385-a78e-4cbd-8025-4f231c2e27e8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.account": {
+      "name": "account",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "providerAccountId": {
+          "name": "providerAccountId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token_type": {
+          "name": "token_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "session_state": {
+          "name": "session_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "account_userId_users_id_fk": {
+          "name": "account_userId_users_id_fk",
+          "tableFrom": "account",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.labels": {
       "name": "labels",
       "schema": "",
@@ -34,14 +127,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -75,15 +168,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "owner": {
-          "name": "owner",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "type": {
           "name": "type",
-          "type": "organization_type",
+          "type": "organisation_type",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -94,14 +181,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -161,14 +248,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -267,14 +354,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -381,6 +468,20 @@
           "primaryKey": false,
           "notNull": true
         },
+        "salt": {
+          "name": "salt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "user_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
         "organization_id": {
           "name": "organization_id",
           "type": "uuid",
@@ -406,14 +507,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -501,14 +602,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1744451834114
+          "default": 1746025006530
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -554,12 +655,20 @@
     }
   },
   "enums": {
-    "public.organization_type": {
-      "name": "organization_type",
+    "public.organisation_type": {
+      "name": "organisation_type",
       "schema": "public",
       "values": [
         "enterprise",
         "client"
+      ]
+    },
+    "public.user_role": {
+      "name": "user_role",
+      "schema": "public",
+      "values": [
+        "admin",
+        "user"
       ]
     }
   },

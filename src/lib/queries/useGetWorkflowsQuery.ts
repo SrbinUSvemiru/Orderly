@@ -16,6 +16,7 @@ const useGetWorkflowsQuery = (options?: { enabled: boolean }) => {
         }
         // should fail silently
       );
+
       return response || ([] as Workflow[]);
     },
     staleTime: Infinity,

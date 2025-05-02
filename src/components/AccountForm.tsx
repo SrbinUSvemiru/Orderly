@@ -33,10 +33,10 @@ export const AccountForm = () => {
   const form = useForm<z.infer<typeof AccountSchema>>({
     resolver: zodResolver(AccountSchema),
     defaultValues: {
-      email: user.email,
-      phone: user.phone,
+      email: user.email || "",
+      phone: user.phone || "",
       lastName: user.lastName || "",
-      firstName: user.firstName,
+      firstName: user.firstName || "",
     },
   });
 
@@ -105,8 +105,6 @@ export const AccountForm = () => {
   if (!user?.id) {
     return <AccountFormSkeleton />;
   }
-
-  console.log("user", user);
 
   return (
     <Form {...form}>
