@@ -50,6 +50,8 @@ export default async function RootLayout({
         email: true,
         role: true,
         firstName: true,
+        phone: true,
+        image: true,
         organizationId: true,
         createdAt: true,
         lastName: true,
@@ -65,6 +67,8 @@ export default async function RootLayout({
           lastName: res.lastName ?? "",
           organizationId: res.organizationId ?? "",
           createdAt: res.createdAt ?? 0,
+          phone: res.phone ?? "",
+          image: res.image ?? "",
         }
       : null;
   }

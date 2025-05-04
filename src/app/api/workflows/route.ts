@@ -1,13 +1,23 @@
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getUserFromSession } from "@/lib/actions/auth";
+
 import { db } from "../../../db/index";
 import { workflows } from "../../../db/schema";
 
 export async function POST(req: NextRequest) {
   try {
+    const sessionUser = await getUserFromSession(req.cookies);
+
+    if (!sessionUser) {
+      return NextResponse.json(
+        { message: "Not authenticated" },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
-    const { name, organizationId, userId } = body;
+    const { name, userId } = body;
 
     const workflow = await db
       .select()
@@ -24,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     await db.insert(workflows).values({
       name: name,
-      organizationId: organizationId,
+      organizationId: sessionUser?.organizationId,
       owner: userId,
     });
 
@@ -41,9 +51,20 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const workflowsList = await db.query.workflows.findMany();
+    const sessionUser = await getUserFromSession(request.cookies);
+
+    if (!sessionUser) {
+      return NextResponse.json(
+        { message: "Not authenticated" },
+        { status: 401 }
+      );
+    }
+    const workflowsList = await db
+      .select()
+      .from(workflows)
+      .where(eq(workflows.organizationId, sessionUser.organizationId));
 
     if (workflowsList) {
       return NextResponse.json([...workflowsList], { status: 200 });

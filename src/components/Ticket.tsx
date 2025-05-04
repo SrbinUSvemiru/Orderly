@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FC } from "react";
 import React from "react";
 
-import getDataFromUnixTimestamp from "@/lib/date";
+import { getDataFromUnixTimestamp } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { Ticket as TicketType } from "@/types/ticket";
 

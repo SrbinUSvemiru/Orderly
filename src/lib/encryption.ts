@@ -1,23 +1,30 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-
+import { JWTPayload, jwtVerify, SignJWT } from "jose";
 const secretKey = process.env.ENCRYPTION_KEY || "default_secret_key";
 
-export function generateToken(payload: object): string {
-  return jwt.sign(payload, secretKey, { expiresIn: "1h" });
+export interface RegisterPayload extends JWTPayload {
+  email: string;
+  organizationId: string;
 }
 
-export function verifyToken(token: string): JwtPayload | null {
-  try {
-    const decoded = jwt.verify(token, secretKey);
+export async function generateToken(payload: object): Promise<string> {
+  return await new SignJWT(payload as RegisterPayload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("1d")
+    .sign(secret);
+}
 
-    // Check if decoded is an object (JwtPayload) and not a string
-    if (typeof decoded === "object" && decoded !== null) {
-      return decoded as JwtPayload;
-    } else {
-      return null; // If the decoded value is not an object, return null
-    }
-  } catch (error) {
-    console.error("Invalid or expired token:", error);
+const secret = new TextEncoder().encode(secretKey);
+
+export async function verifyToken(
+  token: string
+): Promise<RegisterPayload | null> {
+  try {
+    const { payload } = await jwtVerify(token, secret, {
+      algorithms: ["HS256"],
+    });
+    return payload as RegisterPayload;
+  } catch {
     return null;
   }
 }

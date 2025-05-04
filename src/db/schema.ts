@@ -54,9 +54,11 @@ export const users = pgTable("users", {
   password: varchar().notNull(),
   salt: text().notNull(),
   role: userRoleEnum().notNull().default("user"),
-  organizationId: uuid("organization_id").references(() => organizations.id, {
-    onDelete: "cascade",
-  }),
+  organizationId: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id, {
+      onDelete: "cascade",
+    }),
   image: text().default(""),
   active: boolean().notNull().default(true),
   ...timestamps,

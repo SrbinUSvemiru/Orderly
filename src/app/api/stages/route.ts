@@ -1,11 +1,21 @@
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getUserFromSession } from "@/lib/actions/auth";
+
 import { db } from "../../../db/index";
 import { stages } from "../../../db/schema";
 
 export async function POST(req: NextRequest) {
   try {
+    const sessionUser = await getUserFromSession(req.cookies);
+
+    if (!sessionUser) {
+      return NextResponse.json(
+        { message: "Not authenticated" },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
     const { name, weight, workflowId } = body;
 
@@ -47,6 +57,14 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const sessionUser = await getUserFromSession(req.cookies);
+
+    if (!sessionUser) {
+      return NextResponse.json(
+        { message: "Not authenticated" },
+        { status: 401 }
+      );
+    }
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

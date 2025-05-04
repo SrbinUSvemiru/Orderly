@@ -1,5 +1,25 @@
 import * as z from "zod";
 
+export const AccountSchema = z
+  .object({
+    email: z.string().min(1, "Email is required").email("Invalid email"),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must have more than 8 characters"),
+    confirmPassword: z.string().min(1, "Password confirmation is required"),
+    firstName: z.string().min(2, "First name"),
+    lastName: z.string().min(2, "Last name"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+export const CompanySchema = z.object({
+  companyName: z.string().min(2, "Company name must have at least two letters"),
+});
+
 export const RegisterSchema = z
   .object({
     email: z.string().min(1, "Email is required").email("Invalid email"),
@@ -9,7 +29,10 @@ export const RegisterSchema = z
       .min(8, "Password must have more than 8 characters"),
     confirmPassword: z.string().min(1, "Password confirmation is required"),
     firstName: z.string().min(2, "First name"),
-    lastName: z.string(),
+    lastName: z.string().min(2, "Last name"),
+    companyName: z
+      .string()
+      .min(2, "Company name must have at least two letters"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],

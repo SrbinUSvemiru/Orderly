@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       .select()
       .from(organizations)
       .where(eq(organizations.name, name))
-      .then((res) => res[0]); // Drizzle returns an array
+      .then((res) => res[0]);
 
     if (organization) {
       return NextResponse.json(

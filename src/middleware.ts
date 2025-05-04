@@ -5,9 +5,10 @@ import {
   updateUserSessionExpiration,
 } from "./lib/actions/auth";
 import { logOut } from "./lib/actions/logOut";
+import { verifyToken } from "./lib/encryption";
 
 const privateRoutes = ["/", "workflow", "settings", "clients", "inventory"];
-const publicRoutes = ["sign-in"];
+const publicRoutes = ["sign-in", "sign-up"];
 const adminRoutes = ["/admin"];
 
 export async function middleware(request: NextRequest) {
@@ -28,7 +29,6 @@ async function middlewareAuth(request: NextRequest) {
 
   if (privateRoutes.includes(rootPath)) {
     const user = await getUserFromSession(request.cookies);
-
     if (user === null) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
@@ -38,6 +38,14 @@ async function middlewareAuth(request: NextRequest) {
     const user = await getUserFromSession(request.cookies);
     if (user && rootPath === "sign-in") {
       await logOut();
+    }
+    if (rootPath === "sign-up") {
+      const token = request.nextUrl.searchParams.get("token");
+      const verifiedToken = token ? await verifyToken(token) : null;
+
+      if (!verifiedToken?.email) {
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+      }
     }
   }
 

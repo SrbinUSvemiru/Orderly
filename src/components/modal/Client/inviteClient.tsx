@@ -61,9 +61,10 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
 
       const res = await response.json();
 
-      if (res.error) {
-        toast.error(res.error);
+      if (!res.success) {
+        toast.error(res.message);
       } else {
+        console.log(res.data);
         toast.success(res.message);
       }
 
