@@ -4,6 +4,7 @@ import {
   bigint,
   boolean,
   integer,
+  json,
   pgEnum,
   pgTable,
   primaryKey,
@@ -12,7 +13,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const userRoles = ["admin", "user"] as const;
+export const userRoles = ["owner", "admin", "user"] as const;
 export type UserRole = (typeof userRoles)[number];
 export const userRoleEnum = pgEnum("user_role", userRoles);
 
@@ -23,6 +24,10 @@ export const organisationTypeEnum = pgEnum(
   organisationTypes
 );
 
+export const languages = ["en", "sr"] as const;
+export type Language = (typeof languages)[number];
+export const languageEnum = pgEnum("language", languages);
+
 const timestamps = {
   createdAt: bigint("created_at", { mode: "number" }).default(Date.now()),
   updatedAt: bigint("updated_at", { mode: "number" })
@@ -31,18 +36,6 @@ const timestamps = {
     .$onUpdate(() => Date.now()),
   deletedAt: bigint("deleted_at", { mode: "number" }),
 };
-
-export const organizations = pgTable("organizations", {
-  id: uuid().primaryKey().defaultRandom(),
-  name: text().notNull(),
-  type: organisationTypeEnum().notNull().default("client"),
-  ...timestamps,
-});
-
-export const organizationRelations = relations(organizations, ({ many }) => ({
-  users: many(users),
-  workflows: many(workflows),
-}));
 
 export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
@@ -63,6 +56,29 @@ export const users = pgTable("users", {
   active: boolean().notNull().default(true),
   ...timestamps,
 });
+
+export const organizations = pgTable("organizations", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: text().notNull(),
+  ownerId: uuid("owner_id").notNull(),
+  language: languageEnum().notNull().default("en"),
+  address: json("address")
+    .$type<{
+      country: string;
+      city: string;
+      street: string;
+      streetNumber: string;
+      postalCode: string;
+    }>()
+    .notNull(),
+  type: organisationTypeEnum().notNull().default("client"),
+  ...timestamps,
+});
+
+export const organizationRelations = relations(organizations, ({ many }) => ({
+  users: many(users),
+  workflows: many(workflows),
+}));
 
 export const usersRelations = relations(users, ({ one }) => ({
   organization: one(organizations, {

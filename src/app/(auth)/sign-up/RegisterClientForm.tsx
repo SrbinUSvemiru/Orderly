@@ -9,6 +9,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { FormGrid, FormGridItem, GridItem } from "@/components/Grid/Grid";
+import { FormSelect } from "@/components/Select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { signUp } from "@/lib/actions/signUp";
@@ -23,13 +25,16 @@ import {
   Form,
   FormControl,
   FormField,
-  FormItem,
   FormLabel,
   FormMessage,
 } from "../../../components/ui/form";
 import { Input } from "../../../components/ui/input";
 
-export const RegisterForm = ({ token }: { token: RegisterPayload | null }) => {
+export const RegisterClientForm = ({
+  token,
+}: {
+  token: RegisterPayload | null;
+}) => {
   const router = useRouter();
   const [step, setStep] = useState<"account" | "company">("account");
   const [isMutating, setisMutating] = useState(false);
@@ -51,6 +56,13 @@ export const RegisterForm = ({ token }: { token: RegisterPayload | null }) => {
     mode: "onChange",
     defaultValues: {
       companyName: "",
+      address: {
+        country: "",
+        street: "",
+        streetNumber: "",
+        city: "",
+        postalCode: "",
+      },
     },
   });
 
@@ -63,10 +75,13 @@ export const RegisterForm = ({ token }: { token: RegisterPayload | null }) => {
   } = companyForm;
 
   const onSubmit = async () => {
-    const values = { ...accountForm.getValues(), ...companyForm.getValues() };
-    if (!isCompanyValid && !isValid) return;
+    if (!isCompanyValid || !isValid) return;
     setisMutating(true);
-    const res = await signUp(values);
+
+    const res = await signUp({
+      ...accountForm.getValues(),
+      ...companyForm.getValues(),
+    });
 
     if (res?.success) {
       toast.success(res?.message);
@@ -88,7 +103,8 @@ export const RegisterForm = ({ token }: { token: RegisterPayload | null }) => {
   }, [token]);
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 w-[420px]">
+      <p className="text-2xl font-bold ml-2.5">Register</p>
       <Card>
         <CardHeader className="relative flex-row justify-center items-center">
           <CardTitle
@@ -117,41 +133,43 @@ export const RegisterForm = ({ token }: { token: RegisterPayload | null }) => {
             {upperFirst("company")}
           </CardTitle>
         </CardHeader>
+
         <Separator orientation="horizontal" />
+
         <CardContent>
           {step === "account" && (
             <Form {...accountForm}>
-              <form className="space-y-4 text-center min-w-[390px] min-h-[420px]">
+              <FormGrid columns={12} className="text-center">
                 <FormField
                   control={accountForm.control}
                   name="firstName"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormGridItem sm={12}>
                       <FormLabel>First name</FormLabel>
                       <FormControl>
                         <Input placeholder="John" {...field} />
                       </FormControl>
                       <FormMessage className="text-left" />
-                    </FormItem>
+                    </FormGridItem>
                   )}
                 />
                 <FormField
                   control={accountForm.control}
                   name="lastName"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormGridItem sm={12}>
                       <FormLabel>Last name</FormLabel>
                       <FormControl>
                         <Input placeholder="Smith" {...field} />
                       </FormControl>
-                    </FormItem>
+                    </FormGridItem>
                   )}
                 />
                 <FormField
                   control={accountForm.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormGridItem sm={12}>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
@@ -162,28 +180,28 @@ export const RegisterForm = ({ token }: { token: RegisterPayload | null }) => {
                       </FormControl>
 
                       <FormMessage className="text-left" />
-                    </FormItem>
+                    </FormGridItem>
                   )}
                 />
                 <FormField
                   control={accountForm.control}
                   name="password"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormGridItem sm={12}>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <PasswordInput placeholder="password" {...field} />
                       </FormControl>
 
                       <FormMessage className="text-left" />
-                    </FormItem>
+                    </FormGridItem>
                   )}
                 />
                 <FormField
                   control={accountForm.control}
                   name="confirmPassword"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormGridItem sm={12}>
                       <FormLabel>Confirm password</FormLabel>
                       <FormControl>
                         <PasswordInput
@@ -193,48 +211,123 @@ export const RegisterForm = ({ token }: { token: RegisterPayload | null }) => {
                       </FormControl>
 
                       <FormMessage className="text-left" />
-                    </FormItem>
+                    </FormGridItem>
                   )}
                 />
-
-                <Button
-                  type="button"
-                  onClick={() => setStep("company")}
-                  disabled={!isValid}
-                  className="w-full mt-4"
-                >
-                  Next
-                </Button>
-              </form>
+                <GridItem sm={12}>
+                  <Button
+                    type="button"
+                    onClick={() => setStep("company")}
+                    disabled={!isValid || isMutating}
+                    className="w-full mt-4"
+                  >
+                    Next
+                  </Button>
+                </GridItem>
+              </FormGrid>
             </Form>
           )}
           {step === "company" && (
             <Form {...companyForm}>
-              <form className="space-y-4 text-center min-w-[390px] min-h-[420px]">
+              <FormGrid columns={12} gap={4} className="text-center">
                 <FormField
                   control={companyForm.control}
                   name="companyName"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormGridItem sm={12}>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input placeholder="Example LTD" {...field} />
                       </FormControl>
                       <FormMessage className="text-left" />
-                    </FormItem>
+                    </FormGridItem>
                   )}
                 />
-
-                <Button
-                  type="button"
-                  disabled={!isCompanyValid || !isValid}
-                  className="w-full mt-4"
-                  onClick={onSubmit}
-                >
-                  {isMutating && <Loader2 className="animate-spin" />}
-                  Register
-                </Button>
-              </form>
+                <FormField
+                  control={companyForm.control}
+                  name="address.country"
+                  render={({ field }) => (
+                    <FormGridItem sm={12}>
+                      <FormLabel>Country</FormLabel>
+                      <FormControl>
+                        <FormSelect
+                          placeholder="e.g. Serbia"
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          items={[{ label: "Serbia", value: "serbia" }]}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-left" />
+                    </FormGridItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="address.street"
+                  render={({ field }) => (
+                    <FormGridItem sm={9}>
+                      <FormLabel>Street</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. Milutina Ivkovića"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-left" />
+                    </FormGridItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="address.streetNumber"
+                  render={({ field }) => (
+                    <FormGridItem sm={3}>
+                      <FormLabel>Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 42" {...field} />
+                      </FormControl>
+                      <FormMessage className="text-left" />
+                    </FormGridItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="address.city"
+                  render={({ field }) => (
+                    <FormGridItem sm={12}>
+                      <FormLabel>City</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Belgrade" {...field} />
+                      </FormControl>
+                      <FormMessage className="text-left" />
+                    </FormGridItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="address.postalCode"
+                  render={({ field }) => (
+                    <FormGridItem sm={12}>
+                      <FormLabel>Postal code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 11000" {...field} />
+                      </FormControl>
+                      <FormMessage className="text-left" />
+                    </FormGridItem>
+                  )}
+                />
+                <GridItem sm={12}>
+                  <Button
+                    type="button"
+                    disabled={!isCompanyValid || !isValid || isMutating}
+                    className="w-full mt-4"
+                    onClick={onSubmit}
+                  >
+                    {isMutating && <Loader2 className="animate-spin" />}
+                    Register
+                  </Button>
+                </GridItem>
+              </FormGrid>
             </Form>
           )}
         </CardContent>

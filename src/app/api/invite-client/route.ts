@@ -21,10 +21,9 @@ export async function POST(req: NextRequest) {
       );
     }
     const body = await req.json();
-    const { email, organizationId } = body;
+    const { email } = body;
     const token = await generateToken({
       email: email,
-      organizationId: organizationId,
     });
 
     const isExistingUser = await existingUser(email);

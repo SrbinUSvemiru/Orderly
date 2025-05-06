@@ -1,7 +1,8 @@
 import { getCurrentUnix } from "@/lib/date";
 import { verifyToken } from "@/lib/encryption";
 
-import { RegisterForm } from "./RegisterForm";
+import { RegisterClientForm } from "./RegisterClientForm";
+import { RegisterUserForm } from "./RegisterUserForm";
 
 type SearchParams = Promise<{ [key: string]: string | undefined }>;
 
@@ -11,6 +12,7 @@ async function SignUp(props: { searchParams: SearchParams }) {
 
   const data = await verifyToken(token || "");
   let isTokenExpired = true;
+  const organisationId = data?.organizationId || "";
   if (data?.exp) {
     isTokenExpired = data?.exp > getCurrentUnix();
   }
@@ -21,7 +23,9 @@ async function SignUp(props: { searchParams: SearchParams }) {
         Token has expiered
       </p>
     );
-  return <RegisterForm token={data} />;
+
+  if (organisationId) return <RegisterUserForm token={data} />;
+  return <RegisterClientForm token={data} />;
 }
 
 export default SignUp;

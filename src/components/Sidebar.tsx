@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Building2,
   ChevronDown,
@@ -292,6 +293,7 @@ const getItems = ({
 export default function AppSidebar() {
   const user = useUserStore((state) => state.user);
   const { state, setOpenMobile } = useSidebar();
+  const queryClient = useQueryClient();
 
   const router = useRouter();
 
@@ -414,6 +416,7 @@ export default function AppSidebar() {
                       localStorage.removeItem("user-storage");
                       localStorage.removeItem("header-storage");
                       await logOut();
+                      queryClient.clear();
                       router.push("/sign-in");
                     }}
                   >

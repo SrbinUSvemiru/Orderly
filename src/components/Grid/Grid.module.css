@@ -5,6 +5,8 @@
 
 .gridItem {
   display: grid;
+  align-items: start;
+  height: fit-content;
 }
 
 /* Base column spans */

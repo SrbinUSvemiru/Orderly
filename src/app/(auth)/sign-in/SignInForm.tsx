@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { signIn } from "@/lib/actions/signIn";
 import { LoginSchema } from "@/types/login-schema";
 
@@ -56,6 +56,9 @@ export const SignInForm = () => {
 
   return (
     <Card className="min-w-sm">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">Log in</CardTitle>
+      </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
