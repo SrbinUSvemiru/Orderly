@@ -1,5 +1,6 @@
+CREATE TYPE "public"."language" AS ENUM('en', 'sr');--> statement-breakpoint
 CREATE TYPE "public"."organisation_type" AS ENUM('enterprise', 'client');--> statement-breakpoint
-CREATE TYPE "public"."user_role" AS ENUM('admin', 'user');--> statement-breakpoint
+CREATE TYPE "public"."user_role" AS ENUM('owner', 'admin', 'user');--> statement-breakpoint
 CREATE TABLE "account" (
 	"userId" uuid NOT NULL,
 	"type" text NOT NULL,
@@ -18,17 +19,20 @@ CREATE TABLE "labels" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text DEFAULT '' NOT NULL,
 	"color" text DEFAULT '' NOT NULL,
-	"created_at" bigint DEFAULT 1746025006530,
-	"updated_at" bigint DEFAULT 1746025006530 NOT NULL,
+	"created_at" bigint DEFAULT 1746475391366,
+	"updated_at" bigint DEFAULT 1746475391366 NOT NULL,
 	"deleted_at" bigint
 );
 --> statement-breakpoint
 CREATE TABLE "organizations" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
+	"owner_id" uuid NOT NULL,
+	"language" "language" DEFAULT 'en' NOT NULL,
+	"address" json NOT NULL,
 	"type" "organisation_type" DEFAULT 'client' NOT NULL,
-	"created_at" bigint DEFAULT 1746025006530,
-	"updated_at" bigint DEFAULT 1746025006530 NOT NULL,
+	"created_at" bigint DEFAULT 1746475391366,
+	"updated_at" bigint DEFAULT 1746475391366 NOT NULL,
 	"deleted_at" bigint
 );
 --> statement-breakpoint
@@ -38,8 +42,8 @@ CREATE TABLE "stages" (
 	"weight" integer DEFAULT 0,
 	"workflow_id" uuid NOT NULL,
 	"active" boolean DEFAULT true NOT NULL,
-	"created_at" bigint DEFAULT 1746025006530,
-	"updated_at" bigint DEFAULT 1746025006530 NOT NULL,
+	"created_at" bigint DEFAULT 1746475391366,
+	"updated_at" bigint DEFAULT 1746475391366 NOT NULL,
 	"deleted_at" bigint
 );
 --> statement-breakpoint
@@ -53,8 +57,8 @@ CREATE TABLE "tickets" (
 	"description" text DEFAULT '',
 	"due_date" bigint,
 	"active" boolean DEFAULT true NOT NULL,
-	"created_at" bigint DEFAULT 1746025006530,
-	"updated_at" bigint DEFAULT 1746025006530 NOT NULL,
+	"created_at" bigint DEFAULT 1746475391366,
+	"updated_at" bigint DEFAULT 1746475391366 NOT NULL,
 	"deleted_at" bigint
 );
 --> statement-breakpoint
@@ -68,11 +72,11 @@ CREATE TABLE "users" (
 	"password" varchar NOT NULL,
 	"salt" text NOT NULL,
 	"role" "user_role" DEFAULT 'user' NOT NULL,
-	"organization_id" uuid,
+	"organization_id" uuid NOT NULL,
 	"image" text DEFAULT '',
 	"active" boolean DEFAULT true NOT NULL,
-	"created_at" bigint DEFAULT 1746025006530,
-	"updated_at" bigint DEFAULT 1746025006530 NOT NULL,
+	"created_at" bigint DEFAULT 1746475391366,
+	"updated_at" bigint DEFAULT 1746475391366 NOT NULL,
 	"deleted_at" bigint,
 	CONSTRAINT "users_email_unique" UNIQUE("email"),
 	CONSTRAINT "users_phone_unique" UNIQUE("phone")
@@ -84,8 +88,8 @@ CREATE TABLE "workflows" (
 	"owner" uuid,
 	"organization_id" uuid NOT NULL,
 	"active" boolean DEFAULT true NOT NULL,
-	"created_at" bigint DEFAULT 1746025006530,
-	"updated_at" bigint DEFAULT 1746025006530 NOT NULL,
+	"created_at" bigint DEFAULT 1746475391366,
+	"updated_at" bigint DEFAULT 1746475391366 NOT NULL,
 	"deleted_at" bigint
 );
 --> statement-breakpoint

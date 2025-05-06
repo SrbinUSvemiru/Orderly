@@ -15,6 +15,7 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { Tooltip } from "../Tooltip";
 
 const Form = FormProvider;
 
@@ -145,14 +146,19 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   }
 
   return (
-    <p
-      data-slot="form-message"
-      id={formMessageId}
-      className={cn("text-destructive-foreground text-sm", className)}
-      {...props}
-    >
-      {body}
-    </p>
+    <Tooltip text={`${body}`}>
+      <p
+        data-slot="form-message"
+        id={formMessageId}
+        className={cn(
+          "text-destructive-foreground text-sm truncate",
+          className
+        )}
+        {...props}
+      >
+        {body}
+      </p>
+    </Tooltip>
   );
 }
 

@@ -15,7 +15,7 @@ interface FormGridProps {
   className?: string;
   columns: number;
   gap?: number;
-  onSubmit: () => void;
+  onSubmit?: () => void;
 }
 
 interface GridItemProps {

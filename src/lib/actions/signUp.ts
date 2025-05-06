@@ -1,28 +1,94 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { v4 as uuid } from "uuid";
 import { z } from "zod";
 
 import { db } from "@/db";
-import { users } from "@/db/schema";
-import { RegisterSchema } from "@/types/register-schema";
+import { organizations, users } from "@/db/schema";
+import { AccountSchema, RegisterSchema } from "@/types/register-schema";
 
+import { existingUser } from "../db_actions/existingUser";
 import { generateSalt, hashPassword } from "./auth";
 
 export async function signUp(credentials: z.infer<typeof RegisterSchema>) {
   try {
-    const { email, password, firstName, lastName } =
-      RegisterSchema.parse(credentials);
+    const parsed = RegisterSchema.parse(credentials);
 
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .then((res) => res[0]); // Drizzle returns an array
+    const { email, password, firstName, lastName, companyName, address } =
+      parsed;
 
-    if (existingUser) {
-      throw new Error("User with this email already exists");
+    const isExistingUser = await existingUser(email);
+
+    if (isExistingUser) {
+      return { message: "User with this email already exists", success: false };
     }
+
+    const salt = generateSalt();
+    const hashedPassword = await hashPassword(password, salt);
+
+    const name = lastName ? `${firstName} ${lastName}` : firstName;
+
+    const orgId = uuid();
+    const userId = uuid();
+
+    const [organisation] = await db
+      .insert(organizations)
+      .values({
+        id: orgId,
+        name: companyName,
+        ownerId: userId,
+        address: {
+          street: address.street || "",
+          streetNumber: address.streetNumber || "",
+          postalCode: address.postalCode || "",
+          country: address.country || "",
+          city: address.city || "",
+        },
+      })
+      .returning({ id: organizations.id });
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        id: userId,
+        email: email,
+        password: hashedPassword,
+        firstName: firstName,
+        lastName: lastName,
+        name: name,
+        salt: salt,
+        organizationId: orgId,
+        role: "owner",
+      })
+      .returning({ id: users.id, role: users.role });
+
+    if (!organisation) {
+      return { message: "Unable to create organisation", success: false };
+    }
+
+    if (!user) {
+      return { message: "Unable to create user", success: false };
+    }
+
+    return { message: "User created successfully", success: true };
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return { message: "Internal server error", success: false };
+  }
+}
+
+export async function signUpUser(credentials: z.infer<typeof AccountSchema>) {
+  try {
+    const parsed = AccountSchema.parse(credentials);
+
+    const { email, password, firstName, lastName, organisationId } = parsed;
+
+    const isExistingUser = await existingUser(email);
+
+    if (isExistingUser) {
+      return { message: "User with this email already exists", success: false };
+    }
+
     const salt = generateSalt();
     const hashedPassword = await hashPassword(password, salt);
 
@@ -37,6 +103,8 @@ export async function signUp(credentials: z.infer<typeof RegisterSchema>) {
         lastName: lastName,
         name: name,
         salt: salt,
+        organizationId: organisationId || "",
+        role: "user",
       })
       .returning({ id: users.id, role: users.role });
 
@@ -47,5 +115,6 @@ export async function signUp(credentials: z.infer<typeof RegisterSchema>) {
     return { message: "User created successfully", success: true };
   } catch (error) {
     console.error("Error creating user:", error);
+    return { message: "Internal server error", success: false };
   }
 }

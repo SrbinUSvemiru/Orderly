@@ -1,5 +1,5 @@
 {
-  "id": "3b60a385-a78e-4cbd-8025-4f231c2e27e8",
+  "id": "3b32429f-f277-4297-a34b-fa93b5a671f9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -127,14 +127,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -168,6 +168,26 @@
           "primaryKey": false,
           "notNull": true
         },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "language",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'en'"
+        },
+        "address": {
+          "name": "address",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
         "type": {
           "name": "type",
           "type": "organisation_type",
@@ -181,14 +201,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -248,14 +268,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -354,14 +374,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -486,7 +506,7 @@
           "name": "organization_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "image": {
           "name": "image",
@@ -507,14 +527,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -602,14 +622,14 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": false,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746025006530
+          "default": 1746475391366
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -655,6 +675,14 @@
     }
   },
   "enums": {
+    "public.language": {
+      "name": "language",
+      "schema": "public",
+      "values": [
+        "en",
+        "sr"
+      ]
+    },
     "public.organisation_type": {
       "name": "organisation_type",
       "schema": "public",
@@ -667,6 +695,7 @@
       "name": "user_role",
       "schema": "public",
       "values": [
+        "owner",
         "admin",
         "user"
       ]

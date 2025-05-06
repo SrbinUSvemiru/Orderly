@@ -16,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { ClientModalData } from "@/stores/modalStore";
-import { useUserStore } from "@/stores/userStore";
 
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
@@ -29,8 +28,6 @@ interface ClientProps {
 
 export const Client: React.FC<ClientProps> = ({ closeModal }) => {
   const [isMutating, setMutating] = useState(false);
-
-  const user = useUserStore((state) => state.user);
 
   const form = useForm<z.infer<typeof InviteClient>>({
     resolver: zodResolver(InviteClient),
@@ -55,14 +52,13 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
         },
         body: JSON.stringify({
           email: values.email,
-          organizationId: user.organizationId,
         }),
       });
 
       const res = await response.json();
 
-      if (res.error) {
-        toast.error(res.error);
+      if (!res.success) {
+        toast.error(res.message);
       } else {
         toast.success(res.message);
       }

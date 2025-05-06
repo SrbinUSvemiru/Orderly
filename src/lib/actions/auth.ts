@@ -24,6 +24,7 @@ export function generateSalt() {
 
 const sessionSchema = z.object({
   id: z.string().uuid(),
+  organizationId: z.string().uuid(),
   role: z.enum(userRoles),
 });
 
@@ -102,8 +103,7 @@ export async function comparePasswords({
   hashedPassword: string;
 }) {
   const inputHashedPassword = await hashPassword(password, salt);
-  console.log(inputHashedPassword);
-  console.log(hashedPassword);
+
   return crypto.timingSafeEqual(
     Buffer.from(inputHashedPassword, "hex"),
     Buffer.from(hashedPassword, "hex")

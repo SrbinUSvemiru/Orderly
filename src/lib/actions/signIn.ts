@@ -25,6 +25,7 @@ export async function signIn(credentials: z.infer<typeof LoginSchema>) {
         id: true,
         password: true,
         email: true,
+        organizationId: true,
         role: true,
         salt: true,
       },
