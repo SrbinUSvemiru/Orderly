@@ -17,7 +17,7 @@ export const userRoles = ["owner", "admin", "user"] as const;
 export type UserRole = (typeof userRoles)[number];
 export const userRoleEnum = pgEnum("user_role", userRoles);
 
-const organisationTypes = ["enterprise", "client"] as const;
+export const organisationTypes = ["enterprise", "client"] as const;
 export type OrganisationType = (typeof organisationTypes)[number];
 export const organisationTypeEnum = pgEnum(
   "organisation_type",
@@ -29,7 +29,9 @@ export type Language = (typeof languages)[number];
 export const languageEnum = pgEnum("language", languages);
 
 const timestamps = {
-  createdAt: bigint("created_at", { mode: "number" }).default(Date.now()),
+  createdAt: bigint("created_at", { mode: "number" })
+    .notNull()
+    .default(Date.now()),
   updatedAt: bigint("updated_at", { mode: "number" })
     .notNull()
     .default(Date.now())
@@ -40,9 +42,9 @@ const timestamps = {
 export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
   email: varchar().unique().notNull(),
-  phone: text().unique(),
-  firstName: text("first_name").default(""),
-  lastName: text("last_name").default(""),
+  phone: text().unique().default(""),
+  firstName: text("first_name").default("").notNull(),
+  lastName: text("last_name").default("").notNull(),
   name: text().default(""),
   password: varchar().notNull(),
   salt: text().notNull(),
