@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { z } from "zod";
 
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { organizations, users } from "@/db/schema";
 import { LoginSchema } from "@/types/login-schema";
 
 import { comparePasswords, createUserSession } from "./auth";
@@ -33,7 +33,19 @@ export async function signIn(credentials: z.infer<typeof LoginSchema>) {
     });
 
     if (!user || !user.password) {
-      throw new Error("User not found");
+      return { message: "User not found", success: false };
+    }
+
+    const organisation = await db.query.organizations.findFirst({
+      columns: {
+        id: true,
+        type: true,
+      },
+      where: eq(organizations.id, user.organizationId),
+    });
+
+    if (!organisation) {
+      return { message: "User has no organisation", success: false };
     }
 
     const passwordMatch = await comparePasswords({
@@ -45,7 +57,10 @@ export async function signIn(credentials: z.infer<typeof LoginSchema>) {
     if (!passwordMatch) {
       return { message: "Incorrect password", success: false };
     }
-    await createUserSession(user, await cookies());
+    await createUserSession(
+      { ...user, organizationType: organisation?.type },
+      await cookies()
+    );
     return { success: true, message: "User signed in successfully" };
   } catch (error) {
     console.error("Error signing in:", error);

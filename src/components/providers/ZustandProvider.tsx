@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect } from "react";
 import { useHeaderStore } from "@/stores/headerStore";
 import { useModalStore } from "@/stores/modalStore";
 import { useUserStore } from "@/stores/userStore";
+import { Organisation } from "@/types/organisation";
 import { User } from "@/types/user";
 
 interface ZustandContextType {
@@ -15,6 +16,7 @@ interface ZustandContextType {
 
 interface ZustandProviderProps {
   children: React.ReactNode;
+  organisation: Organisation | null;
   initialUser: User | null;
 }
 
@@ -23,10 +25,23 @@ const ZustandContext = createContext<ZustandContextType | null>(null);
 export const ZustandProvider: React.FC<ZustandProviderProps> = ({
   children,
   initialUser,
+  organisation,
 }) => {
   useEffect(() => {
-    useUserStore.setState({ user: initialUser || undefined });
-  }, [initialUser]);
+    if (!initialUser || !organisation) return;
+    const user = {
+      ...initialUser,
+      firstName: initialUser.firstName || "",
+      lastName: initialUser.lastName || "",
+      phone: initialUser.phone || "",
+      createdAt: initialUser.createdAt || Date.now(),
+      image: initialUser.image || "",
+      organisation: organisation,
+    };
+    useUserStore.setState({
+      user: user,
+    });
+  }, [initialUser, organisation]);
 
   return (
     <ZustandContext.Provider

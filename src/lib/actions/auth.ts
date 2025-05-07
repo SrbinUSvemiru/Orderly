@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { z } from "zod";
 
-import { userRoles } from "@/db/schema";
+import { organisationTypes, userRoles } from "@/db/schema";
 import { redisClient } from "@/redis/redis";
 
 const COOKIE_SESSION_KEY = "orderly-sessionId";
@@ -25,6 +25,7 @@ export function generateSalt() {
 const sessionSchema = z.object({
   id: z.string().uuid(),
   organizationId: z.string().uuid(),
+  organizationType: z.enum(organisationTypes),
   role: z.enum(userRoles),
 });
 

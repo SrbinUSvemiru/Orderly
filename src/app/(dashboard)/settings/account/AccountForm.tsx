@@ -11,18 +11,22 @@ import { triggerHeader } from "@/lib/triggerHeader";
 import { useUserStore } from "@/stores/userStore";
 import { AccountSchema } from "@/types/account-schema";
 
-import updateUser from "../lib/actions/updateUser";
-import { FormGrid, FormGridItem, GridItem } from "./Grid/Grid";
-import AccountFormSkeleton from "./skeleton/accountForm";
-import { Button } from "./ui/button";
+import {
+  FormGrid,
+  FormGridItem,
+  GridItem,
+} from "../../../../components/Grid/Grid";
+import AccountFormSkeleton from "../../../../components/skeleton/accountForm";
+import { Button } from "../../../../components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
+} from "../../../../components/ui/form";
+import { Input } from "../../../../components/ui/input";
+import updateUser from "../../../../lib/actions/updateUser";
 
 export const AccountForm = () => {
   const [isMutating, setisMutating] = useState(false);

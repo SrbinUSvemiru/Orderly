@@ -4,19 +4,36 @@ import { persist } from "zustand/middleware";
 
 import { User } from "../types/user";
 
-interface UserStore {
-  user: User;
-  setUser: (_user: User) => void;
-  update: (_updates: Partial<User>) => void;
+interface UserWithOrg extends User {
+  organisation: {
+    id: string;
+    ownerId: string;
+    name: string;
+    language: string;
+    type: string;
+  };
 }
 
-export const defaultInitState: User = {
+interface UserStore {
+  user: UserWithOrg;
+  setUser: (_user: UserWithOrg) => void;
+  update: (_updates: Partial<UserWithOrg>) => void;
+}
+
+export const defaultInitState: UserWithOrg = {
   id: "",
   email: "",
   phone: "",
   firstName: "",
   lastName: "",
   name: "",
+  organisation: {
+    id: "",
+    ownerId: "",
+    name: "",
+    language: "",
+    type: "",
+  },
   createdAt: 0,
   updatedAt: 0,
   deletedAt: undefined,
@@ -31,7 +48,7 @@ export const useUserStore = create(
     (set) => ({
       user: defaultInitState,
       setUser: (user) => set({ user }),
-      update: (updates: Partial<User>) =>
+      update: (updates: Partial<UserWithOrg>) =>
         set((state) => ({
           user: { ...state.user, ...updates },
         })),

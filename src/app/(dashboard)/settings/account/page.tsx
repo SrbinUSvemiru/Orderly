@@ -1,4 +1,4 @@
-import { AccountForm } from "@/components/AccountForm";
+import { AccountForm } from "@/app/(dashboard)/settings/account/AccountForm";
 
 async function Account() {
   return <AccountForm />;
