@@ -15,6 +15,13 @@
       "when": 1746626521272,
       "tag": "0001_silly_luminals",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746784329623,
+      "tag": "0002_fancy_wolverine",
+      "breakpoints": true
     }
   ]
 }

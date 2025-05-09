@@ -1,24 +1,36 @@
-"use client";
+import * as React from "react";
 
-import { useEffect } from "react";
+import { FeatureFlagsProvider } from "@/components/Table/feature-flags-provider";
+import { getClients } from "@/db/queries/getClients";
+import { searchParamsCache } from "@/lib/clients_search_params";
+import { getValidFilters } from "@/lib/data-table";
+import type { SearchParams } from "@/types";
 
-import { triggerHeader } from "@/lib/triggerHeader";
-import { useUserStore } from "@/stores/userStore";
+import ClientsTable from "./ClientsTable";
 
-function Clients() {
-  const user = useUserStore((state) => state.user);
+interface PageProps {
+  searchParams: Promise<SearchParams>;
+}
 
-  useEffect(() => {
-    triggerHeader({
-      title: "Clients",
-      type: "client",
-    });
-  }, [user]);
+async function Clients(props: PageProps) {
+  const searchParams = await props.searchParams;
+  const search = searchParamsCache.parse(searchParams);
+
+  const validFilters = getValidFilters(search.filters);
+
+  const promises = Promise.all([
+    getClients({
+      ...search,
+      filters: validFilters,
+    }),
+  ]);
 
   return (
-    <>
-      <p>Clients</p>
-    </>
+    <React.Suspense>
+      <FeatureFlagsProvider>
+        <ClientsTable promises={promises} />
+      </FeatureFlagsProvider>
+    </React.Suspense>
   );
 }
 

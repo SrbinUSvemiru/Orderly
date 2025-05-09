@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { GlobalModal } from "@/components/modal/GlobalModal";
 import { QueryProvider } from "@/components/providers/QueryProvider";
@@ -58,7 +59,9 @@ export default async function RootLayout({
               <SidebarProvider defaultOpen={defaultOpen}>
                 <Toaster richColors />
 
-                <main className="w-full">{children}</main>
+                <main className="w-full">
+                  <NuqsAdapter>{children}</NuqsAdapter>
+                </main>
               </SidebarProvider>
             </ThemeProvider>
           </ZustandProvider>
