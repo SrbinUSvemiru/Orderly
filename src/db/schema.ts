@@ -71,6 +71,7 @@ export const organizations = pgTable("organizations", {
       street: string;
       streetNumber: string;
       postalCode: string;
+      formatted: string;
     }>()
     .notNull(),
   type: organisationTypeEnum().notNull().default("client"),
@@ -198,3 +199,4 @@ export const accounts = pgTable(
     },
   ]
 );
+export type Organisation = typeof organizations.$inferSelect;

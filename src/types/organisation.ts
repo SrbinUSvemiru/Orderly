@@ -5,6 +5,6 @@ export type Organisation = {
   language: string;
   createdAt?: number;
   updatedAt?: number;
-  deletedAt?: number;
+  deletedAt?: number | null;
   type: string;
 };

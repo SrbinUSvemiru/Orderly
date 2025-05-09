@@ -8,6 +8,7 @@ import { organizations, users } from "@/db/schema";
 import { AccountSchema, RegisterSchema } from "@/types/register-schema";
 
 import { existingUser } from "../db_actions/existingUser";
+import { formatAddress } from "../format";
 import { generateSalt, hashPassword } from "./auth";
 
 export async function signUp(credentials: z.infer<typeof RegisterSchema>) {
@@ -31,6 +32,16 @@ export async function signUp(credentials: z.infer<typeof RegisterSchema>) {
     const orgId = uuid();
     const userId = uuid();
 
+    const addressObj = {
+      street: address.street || "",
+      streetNumber: address.streetNumber || "",
+      postalCode: address.postalCode || "",
+      country: address.country || "",
+      city: address.city || "",
+    };
+
+    const formattedAddress = formatAddress(addressObj);
+
     const [organisation] = await db
       .insert(organizations)
       .values({
@@ -38,11 +49,8 @@ export async function signUp(credentials: z.infer<typeof RegisterSchema>) {
         name: companyName,
         ownerId: userId,
         address: {
-          street: address.street || "",
-          streetNumber: address.streetNumber || "",
-          postalCode: address.postalCode || "",
-          country: address.country || "",
-          city: address.city || "",
+          ...addressObj,
+          formatted: formattedAddress,
         },
       })
       .returning({ id: organizations.id });
