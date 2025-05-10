@@ -72,7 +72,7 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
 
   return (
     <FeatureFlagsContext.Provider value={contextValue}>
-      <div className="w-full overflow-x-auto p-1">
+      <div className="w-full overflow-x-auto p-1 mb-5">
         <ToggleGroup
           type="single"
           variant="outline"
@@ -85,7 +85,7 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
             <Tooltip key={flag.value} delayDuration={700}>
               <ToggleGroupItem
                 value={flag.value}
-                className="whitespace-nowrap px-3 text-xs data-[state=on]:bg-accent/70 data-[state=on]:hover:bg-accent/90"
+                className="cursor-pointer whitespace-nowrap px-3 data-[state=on]:text-primary-foreground text-xs data-[state=on]:bg-primary/80 data-[state=on]:hover:bg-primary/70"
                 asChild
               >
                 <TooltipTrigger>

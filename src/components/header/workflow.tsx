@@ -22,6 +22,7 @@ export const Workflow: React.FC<WorkflowProps> = ({ headerData }) => {
             submitButton: { label: "Create" },
             workflowId: headerData.workflowId ? headerData.workflowId : "",
             modalType: "stage",
+            type: "drawer",
             action: () => (headerData.action ? headerData.action() : {}),
           })
         }

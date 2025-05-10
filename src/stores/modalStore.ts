@@ -4,6 +4,7 @@ export interface BaseModalData {
   title: string;
   message?: string;
   action?: () => void;
+  type?: "dialog" | "drawer";
   submitButton?: { label: string };
 }
 

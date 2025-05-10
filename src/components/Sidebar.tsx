@@ -249,10 +249,11 @@ const getItems = ({
       label: "Add",
       onClick: () =>
         triggerModal({
-          title: "Create new workflow",
+          title: "Create workflow",
           modalType: "workflow",
           organizationId: organizationId,
           userId: userId,
+          type: "drawer",
         }),
     },
     subitems: !workflows?.length

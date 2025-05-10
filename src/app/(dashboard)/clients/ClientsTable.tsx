@@ -42,7 +42,7 @@ function ClientsTable({ promises }: ClientTableProps) {
   useLayoutEffect(() => {
     triggerHeader({
       title: "Clients",
-      type: "default",
+      type: "client",
       breadcrumb: [
         {
           id: "clients",
