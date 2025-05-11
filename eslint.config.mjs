@@ -1,6 +1,8 @@
+import { FlatCompat } from "@eslint/eslintrc";
+import simpleImportSortPlugin from "eslint-plugin-simple-import-sort";
+import unusedImportsPlugin from "eslint-plugin-unused-imports";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,6 +13,36 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  { ignores: ["src/components/ui/**"] },
+  {
+    plugins: {
+      "unused-imports": unusedImportsPlugin,
+      "simple-import-sort": simpleImportSortPlugin,
+    },
+    rules: {
+      "no-console": "warn",
+      semi: ["error", "always"],
+      quotes: ["error", "double"],
+
+      "unused-imports/no-unused-imports": "error",
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+      "no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
+
+  {
+    files: ["*.ts", "*.tsx"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

@@ -1,28 +1,62 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { type NextRequest, NextResponse } from "next/server";
 
-export default withAuth(
-  async function middleware(req: NextRequest) {
-    const token = await getToken({ req });
-    const isAuthenticated = !!token;
+import {
+  getUserFromSession,
+  updateUserSessionExpiration,
+} from "./lib/actions/auth";
+import { logOut } from "./lib/actions/logOut";
+import { verifyToken } from "./lib/encryption";
 
-    // Redirect authenticated users away from login page
-    if (req.nextUrl.pathname.startsWith("/sign-in") && isAuthenticated) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+const privateRoutes = ["/", "workflow", "settings", "clients", "inventory"];
+const publicRoutes = ["sign-in", "sign-up"];
+const clientRoutes = ["/", "settings"];
 
-    return NextResponse.next();
-  },
-  {
-    pages: {
-      signIn: "/sign-in", // Redirect unauthorized users to login
+export async function middleware(request: NextRequest) {
+  const response = (await middlewareAuth(request)) ?? NextResponse.next();
+
+  await updateUserSessionExpiration({
+    set: (key, value, options) => {
+      response.cookies.set({ ...options, name: key, value });
     },
-  }
-);
+    get: (key) => request.cookies.get(key),
+  });
 
-// Apply middleware only to protected routes
+  return response;
+}
+
+async function middlewareAuth(request: NextRequest) {
+  const rootPath = request.nextUrl.pathname.split("/")[1] || "/";
+
+  if (privateRoutes.includes(rootPath)) {
+    const user = await getUserFromSession(request.cookies);
+    const orgType = user?.organizationType;
+    if (user === null) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+    if (orgType === "client" && !clientRoutes.includes(rootPath)) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+  }
+
+  if (publicRoutes.includes(rootPath)) {
+    const user = await getUserFromSession(request.cookies);
+    if (user && rootPath === "sign-in") {
+      await logOut();
+    }
+    if (rootPath === "sign-up") {
+      const token = request.nextUrl.searchParams.get("token");
+      const verifiedToken = token ? await verifyToken(token) : null;
+
+      if (!verifiedToken?.email) {
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+      }
+    }
+  }
+}
+
 export const config = {
-  matcher: ["/"], // Protect all dashboard pages
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+  ],
 };

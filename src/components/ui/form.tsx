@@ -1,20 +1,21 @@
 "use client";
 
-import * as React from "react";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
 import {
   Controller,
-  FormProvider,
-  useFormContext,
-  useFormState,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
+  FormProvider,
+  useFormContext,
+  useFormState,
 } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { Tooltip } from "../Tooltip";
 
 const Form = FormProvider;
 
@@ -145,24 +146,29 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   }
 
   return (
-    <p
-      data-slot="form-message"
-      id={formMessageId}
-      className={cn("text-destructive-foreground text-sm", className)}
-      {...props}
-    >
-      {body}
-    </p>
+    <Tooltip text={`${body}`}>
+      <p
+        data-slot="form-message"
+        id={formMessageId}
+        className={cn(
+          "text-destructive-foreground text-sm truncate",
+          className
+        )}
+        {...props}
+      >
+        {body}
+      </p>
+    </Tooltip>
   );
 }
 
 export {
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };

@@ -1,16 +1,13 @@
-"use client";
-import { useState } from "react";
 import {
   Avatar as Wrapper,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
 
-export default function Avatar() {
-  const [src] = useState("https://github.com/shadcn.png");
+export default function Avatar({ src }: { src?: string }) {
   return (
     <Wrapper>
-      <AvatarImage src={src} alt="@shadcn" />
+      <AvatarImage src={src || "https://github.com/shadcn.png"} alt="@shadcn" />
       <AvatarFallback></AvatarFallback>
     </Wrapper>
   );

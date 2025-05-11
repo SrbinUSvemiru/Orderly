@@ -1,9 +1,19 @@
+import "./globals.css";
+
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { cookies } from "next/headers";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
+import { GlobalModal } from "@/components/modal/GlobalModal";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ZustandProvider } from "@/components/providers/ZustandProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { getCurrentOrganisation, getCurrentUser } from "@/lib/currentUser";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,17 +35,37 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  const user = await getCurrentUser();
+  const organisation = await getCurrentOrganisation();
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <SidebarProvider>
-            <Toaster richColors />
-            <main className="w-full">{children}</main>
-          </SidebarProvider>
-        </AuthProvider>
+        <SpeedInsights />
+        <Analytics />
+        <QueryProvider>
+          <ZustandProvider initialUser={user} organisation={organisation}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <GlobalModal />
+              <SidebarProvider defaultOpen={defaultOpen}>
+                <Toaster richColors />
+
+                <main className="w-full">
+                  <NuqsAdapter>{children}</NuqsAdapter>
+                </main>
+              </SidebarProvider>
+            </ThemeProvider>
+          </ZustandProvider>
+        </QueryProvider>
       </body>
     </html>
   );

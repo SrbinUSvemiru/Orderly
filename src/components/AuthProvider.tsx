@@ -1,13 +1,36 @@
 "use client";
-import { SessionProvider } from "next-auth/react";
-import { FC, ReactNode } from "react";
+
+import { useEffect } from "react";
+
+import fetchFromServer from "@/lib/fetchFromServer";
+import { useUserStore } from "@/stores/userStore";
 
 interface ProviderProps {
-  children: ReactNode;
+  initialUser: {
+    id: string;
+    role: string;
+  } | null;
 }
 
-const AuthProvider: FC<ProviderProps> = ({ children }) => {
-  return <SessionProvider>{children}</SessionProvider>;
-};
+export function SessionSync({ initialUser }: ProviderProps) {
+  const setUser = useUserStore((state) => state.setUser);
+  const user = useUserStore((state) => state.user);
 
-export default AuthProvider;
+  useEffect(() => {
+    const getUser = async (id: string) => {
+      const response = await fetchFromServer(`/api/users?id=${id}`, {
+        method: "GET",
+      });
+
+      if (response?.success) {
+        setUser(response.user);
+      }
+    };
+
+    if (initialUser) {
+      getUser(initialUser.id);
+    }
+  }, [initialUser, setUser, user?.id]);
+
+  return null;
+}
