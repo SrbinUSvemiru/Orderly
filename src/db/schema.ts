@@ -5,6 +5,7 @@ import {
   boolean,
   integer,
   json,
+  numeric,
   pgEnum,
   pgTable,
   primaryKey,
@@ -27,6 +28,33 @@ export const organisationTypeEnum = pgEnum(
 export const languages = ["en", "sr"] as const;
 export type Language = (typeof languages)[number];
 export const languageEnum = pgEnum("language", languages);
+
+export const lensMaterial = ["cr", "polycarbonat", "trivex"] as const;
+export type LensMaterial = (typeof lensMaterial)[number];
+export const lensMaterialEnum = pgEnum("lens_material", lensMaterial);
+
+export const lensVariant = ["monofocal", "progressive", "bifocal"] as const;
+export type LensVariant = (typeof lensVariant)[number];
+export const lensVariantEnum = pgEnum("lens_variant", lensVariant);
+
+export const lensCoat = ["uc", "hc", "hmc", "hsc", "blue_cut", "ahsc"] as const;
+export type LensCoat = (typeof lensCoat)[number];
+export const lensCoatEnum = pgEnum("lens_coat", lensCoat);
+
+export const lensIndex = [
+  "1.50",
+  "1.53",
+  "1.55",
+  "1.56",
+  "1.60",
+  "1.67",
+  "1.70",
+  "1.74",
+  "1.80",
+  "1.90",
+] as const;
+export type LensIndex = (typeof lensIndex)[number];
+export const lensIndexEnum = pgEnum("lens_index", lensIndex);
 
 const timestamps = {
   createdAt: bigint("created_at", { mode: "number" })
@@ -159,6 +187,19 @@ export const tickets = pgTable("tickets", {
   description: text().default(""),
   dueDate: bigint("due_date", { mode: "number" }),
   active: boolean().notNull().default(true),
+  ...timestamps,
+});
+
+export const lenses = pgTable("lenses", {
+  id: uuid().primaryKey().defaultRandom(),
+  ticketId: uuid("ticket_id")
+    .notNull()
+    .references(() => tickets.id, { onDelete: "cascade" }),
+  material: lensMaterialEnum().notNull().default("cr"),
+  coat: lensCoatEnum().notNull().default("uc"),
+  variant: lensVariantEnum().notNull().default("monofocal"),
+  index: lensIndexEnum().notNull().default("1.56"),
+  value: numeric().notNull().default("0"),
   ...timestamps,
 });
 
