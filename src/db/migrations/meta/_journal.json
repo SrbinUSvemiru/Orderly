@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1746475391419,
-      "tag": "0000_outgoing_tiger_shark",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1746626521272,
-      "tag": "0001_silly_luminals",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1746784329623,
-      "tag": "0002_fancy_wolverine",
+      "when": 1746886743680,
+      "tag": "0000_typical_brood",
       "breakpoints": true
     }
   ]

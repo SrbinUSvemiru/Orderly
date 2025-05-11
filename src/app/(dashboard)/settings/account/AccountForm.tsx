@@ -55,7 +55,7 @@ export const AccountForm = () => {
       {
         email: values.email,
         phone: values.phone,
-        lastName: values.lastName || "",
+        lastName: values.lastName,
         firstName: values.firstName,
       },
       handleError

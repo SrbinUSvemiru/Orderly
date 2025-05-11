@@ -1,5 +1,5 @@
 {
-  "id": "3b32429f-f277-4297-a34b-fa93b5a671f9",
+  "id": "22b756a4-ac4f-4583-9973-002b87a9f034",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -126,15 +126,15 @@
           "name": "created_at",
           "type": "bigint",
           "primaryKey": false,
-          "notNull": false,
-          "default": 1746475391366
+          "notNull": true,
+          "default": 1746886743672
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746475391366
+          "default": 1746886743672
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -145,6 +145,105 @@
       },
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.lenses": {
+      "name": "lenses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "ticket_id": {
+          "name": "ticket_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "material": {
+          "name": "material",
+          "type": "lens_material",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'cr'"
+        },
+        "coat": {
+          "name": "coat",
+          "type": "lens_coat",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'uc'"
+        },
+        "variant": {
+          "name": "variant",
+          "type": "lens_variant",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'monofocal'"
+        },
+        "index": {
+          "name": "index",
+          "type": "lens_index",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'1.56'"
+        },
+        "value": {
+          "name": "value",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1746886743672
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1746886743672
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "lenses_ticket_id_tickets_id_fk": {
+          "name": "lenses_ticket_id_tickets_id_fk",
+          "tableFrom": "lenses",
+          "tableTo": "tickets",
+          "columnsFrom": [
+            "ticket_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -200,15 +299,15 @@
           "name": "created_at",
           "type": "bigint",
           "primaryKey": false,
-          "notNull": false,
-          "default": 1746475391366
+          "notNull": true,
+          "default": 1746886743672
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746475391366
+          "default": 1746886743672
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -267,15 +366,15 @@
           "name": "created_at",
           "type": "bigint",
           "primaryKey": false,
-          "notNull": false,
-          "default": 1746475391366
+          "notNull": true,
+          "default": 1746886743672
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746475391366
+          "default": 1746886743672
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -373,15 +472,15 @@
           "name": "created_at",
           "type": "bigint",
           "primaryKey": false,
-          "notNull": false,
-          "default": 1746475391366
+          "notNull": true,
+          "default": 1746886743672
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746475391366
+          "default": 1746886743672
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -459,20 +558,21 @@
           "name": "phone",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "''"
         },
         "first_name": {
           "name": "first_name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "''"
         },
         "last_name": {
           "name": "last_name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "''"
         },
         "name": {
@@ -526,15 +626,15 @@
           "name": "created_at",
           "type": "bigint",
           "primaryKey": false,
-          "notNull": false,
-          "default": 1746475391366
+          "notNull": true,
+          "default": 1746886743672
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746475391366
+          "default": 1746886743672
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -621,15 +721,15 @@
           "name": "created_at",
           "type": "bigint",
           "primaryKey": false,
-          "notNull": false,
-          "default": 1746475391366
+          "notNull": true,
+          "default": 1746886743672
         },
         "updated_at": {
           "name": "updated_at",
           "type": "bigint",
           "primaryKey": false,
           "notNull": true,
-          "default": 1746475391366
+          "default": 1746886743672
         },
         "deleted_at": {
           "name": "deleted_at",
@@ -681,6 +781,52 @@
       "values": [
         "en",
         "sr"
+      ]
+    },
+    "public.lens_coat": {
+      "name": "lens_coat",
+      "schema": "public",
+      "values": [
+        "uc",
+        "hc",
+        "hmc",
+        "hsc",
+        "blue_cut",
+        "ahsc"
+      ]
+    },
+    "public.lens_index": {
+      "name": "lens_index",
+      "schema": "public",
+      "values": [
+        "1.50",
+        "1.53",
+        "1.55",
+        "1.56",
+        "1.60",
+        "1.67",
+        "1.70",
+        "1.74",
+        "1.80",
+        "1.90"
+      ]
+    },
+    "public.lens_material": {
+      "name": "lens_material",
+      "schema": "public",
+      "values": [
+        "cr",
+        "polycarbonat",
+        "trivex"
+      ]
+    },
+    "public.lens_variant": {
+      "name": "lens_variant",
+      "schema": "public",
+      "values": [
+        "monofocal",
+        "progressive",
+        "bifocal"
       ]
     },
     "public.organisation_type": {

@@ -17,6 +17,8 @@ export const Client: React.FC<ClientProps> = ({}) => {
           triggerModal({
             title: "Invite client",
             submitButton: { label: "Invite" },
+            message: "Email associated with another account will not be valid",
+            type: "drawer",
             modalType: "client",
           })
         }

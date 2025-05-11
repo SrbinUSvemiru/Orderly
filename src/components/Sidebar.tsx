@@ -151,6 +151,7 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({
   isMobile,
   onClick,
 }) => {
+  console.log(item);
   return (
     <SidebarMenuItem>
       <DropdownMenu>
@@ -193,10 +194,10 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({
                   <span>{item?.actionButton?.label || ""}</span>
                   <item.actionButton.icon className="h-4 w-4" />
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                {item?.subitems?.length ? <DropdownMenuSeparator /> : null}
               </div>
             )}
-            {item.subitems?.length && (
+            {item?.subitems?.length ? (
               <div className="flex flex-col overflow-y-auto max-h-[110px]">
                 {item.subitems?.map((el) =>
                   el?.url ? (
@@ -212,7 +213,7 @@ const SidebarPopoverItem: React.FC<SidebarItemProps> = ({
                   )
                 )}
               </div>
-            )}
+            ) : null}
           </div>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -249,10 +250,11 @@ const getItems = ({
       label: "Add",
       onClick: () =>
         triggerModal({
-          title: "Create new workflow",
+          title: "Create workflow",
           modalType: "workflow",
           organizationId: organizationId,
           userId: userId,
+          type: "drawer",
         }),
     },
     subitems: !workflows?.length

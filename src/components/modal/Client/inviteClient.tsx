@@ -83,7 +83,7 @@ export const Client: React.FC<ClientProps> = ({ closeModal }) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="example@mail.com" {...field} />
               </FormControl>
